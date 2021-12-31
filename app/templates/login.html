@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="vh-100" style="background-color: #F5F5F5;">
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+
+                        <h3 class="mb-5">Sign in</h3>
+
+                        <form method="post">
+                            {{ form.hidden_tag() }}
+                            <div class="form-outline mb-4">
+                                {{ form.email(class="form-control form-control-lg", placeholder="Email Address") }}
+                            </div>
+                            <div class="form-outline mb-4">
+                                {{ form.password(class="form-control form-control-lg", placeholder="Password") }}
+                            </div>
+
+                            <div class="d-flex mb-4">
+                                <div class="form-check">
+                                    {{ form.remember_me(class="form-check-input") }}{{ form.remember_me.label(class="form-check-label")}}
+                                </div>
+                            </div>
+
+                            {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+
+                            <div class="divider d-flex align-items-center my-4">
+                                <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+                            </div>
+
+                            <a class="btn btn-lg btn-google btn-block text-uppercase btn-outline" href="{{ url_for('signup_google') }}" role="button"><img src="https://img.icons8.com/color/16/000000/google-logo.png"> Sign In with Google</a>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

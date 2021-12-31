@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="jumbotron">
+        {% if current_user.is_authenticated %}
+        <h1>Welcome to ReviewBoard!</h1>
+        {% else %}
+        <h1>Welcome to ReviewBoard {{ current_user.username }}</h1>
+        {% endif %}
+        <hr>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur corporis cum deleniti eius enim, est eum
+            fugit illo molestiae nam neque numquam quod, repellat reprehenderit sequi sint tenetur ullam voluptas.</p>
+    </div>
+</div>
+
+{% endblock %}
