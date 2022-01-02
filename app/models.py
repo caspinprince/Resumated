@@ -28,4 +28,3 @@ class User(db.Model, UserMixin):
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
 
-db.create_all()
