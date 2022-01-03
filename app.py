@@ -1,11 +1,12 @@
 import os
 from flask_dance.contrib.google import make_google_blueprint, google
-from app import app, db
+from web_app import app, db
 from flask import render_template, redirect, request, url_for, flash, abort
-from flask_login import login_user, login_required, logout_user
-from app.models import User
-from app.forms import LoginForm, RegistrationForm
-from app.oauth import blueprint
+from flask_login import login_user, login_required, logout_user, current_user
+from web_app.models import User
+from web_app.forms import LoginForm, RegistrationForm, EditProfileForm
+from web_app.oauth import blueprint
+from datetime import datetime
 
 app.register_blueprint(blueprint, url_prefix='/signup_google')
 
@@ -68,6 +69,32 @@ def signup():
         return redirect(url_for('login'))
 
     return render_template('signup.html', form=form)
+
+@app.route('/user/<username>', methods=['GET', 'POST'])
+@login_required
+def user(username):
+    form = EditProfileForm(request.form)
+    user = User.query.filter_by(username=username).first_or_404()
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.headline = form.headline.data
+        user.about_me = form.about_me.data
+        db.session.commit()
+        return redirect(url_for('user', username=user.username))
+    elif request.method == 'GET':
+        form.username.data = user.username
+        form.headline.data = user.headline
+        form.about_me.data = user.about_me
+    return render_template('user.html', user=user, form=form)
+
+@app.before_request
+def before_request():
+    user = User.query.filter_by(username=current_user.username).first_or_404()
+    if current_user.is_authenticated:
+        user.last_seen = datetime.utcnow()
+        db.session.commit()
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>User: {{ user.username }}</h1>
+    <hr>
+    {% if user.about_me %}
+        <p>{{ user.about_me }}</p>
+    {% endif %}
+    {% if user.last_online %}
+        <p>{{ user.last_online }}</p>
+    {% endif %}
+    {% if user == current_user %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit your profile</button>
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                        <form class="row g-3" method="post">
+                            <div class="modal-body">
+                                {{ form.hidden_tag() }}
+                                <div class="col-12">
+                                    {{ form.username.label(class="form-label") }}
+                                    {{ form.username(class="form-control")}}
+                                </div>
+                                <div class="col-12">
+                                    {{ form.headline.label(class="form-label") }}
+                                    {{ form.headline(class="form-control")}}
+                                </div>
+                                <div class="col-12">
+                                    {{ form.about_me.label(class="form-label") }}
+                                    {{ form.about_me(class="form-control")}}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

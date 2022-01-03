@@ -1,4 +1,4 @@
-from app import db, login_manager
+from web_app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=True)
     google_id = db.Column(db.String(64), unique=True, index=True, nullable=True)
     about_me = db.Column(db.String(1000))
+    headline = db.Column(db.String(250))
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, first_name, last_name, email, username, password=None, google_id=None):

@@ -1,10 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from flask import render_template, redirect, url_for
 
-from app.models import User
-
+from web_app.models import User
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -30,3 +29,9 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, username):
         if User.query.filter_by(username=username.data).first():
             raise ValidationError('Username is already taken!')
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    headline = StringField('Headline', validators=[Length(min=0, max=250)])
+    about_me = TextAreaField('About me', validators=[Length(min=0, max=1000)])
+    submit = SubmitField('Submit')
