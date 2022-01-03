@@ -3,8 +3,8 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from sqlalchemy.orm.exc import NoResultFound
 from flask_login import current_user, login_user
 from flask_dance.consumer import oauth_authorized
-from app import app, db
-from app.models import User
+from web_app import app, db
+from web_app.models import User
 from flask import redirect, url_for
 
 blueprint = make_google_blueprint(client_id=os.environ.get("GOOGLE_OAUTH_CLIENT_ID"),
