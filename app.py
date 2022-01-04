@@ -10,8 +10,6 @@ from datetime import datetime
 
 app.register_blueprint(blueprint, url_prefix='/signup_google')
 
-
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -20,7 +18,6 @@ def home():
 @login_required
 def user_home():
     return render_template('user_home.html')
-
 
 @app.route('/logout')
 @login_required
@@ -89,12 +86,10 @@ def user(username):
 
 @app.before_request
 def before_request():
-    user = User.query.filter_by(username=current_user.username).first_or_404()
     if current_user.is_authenticated:
-        user.last_seen = datetime.utcnow()
+        user = User.query.filter_by(username=current_user.username).first_or_404()
+        user.last_online = datetime.utcnow()
         db.session.commit()
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
