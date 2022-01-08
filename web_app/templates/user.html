@@ -11,48 +11,88 @@
         </div>
     {% endfor %}
 
-    <h1>User: {{ user.username }}</h1>
-    <hr>
-    {% if user.about_me %}
-        <p>{{ user.about_me }}</p>
-    {% endif %}
-    {% if user.last_online %}
-        <p>{{ user.last_online }}</p>
-    {% endif %}
-    {% if user == current_user %}
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit your profile</button>
-        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                        <form class="row g-3" method="post">
-                            <div class="modal-body">
-                                {{ form.hidden_tag() }}
-                                <div class="col-12">
-                                    {{ form.username.label(class="form-label") }}
-                                    {{ form.username(class="form-control")}}
+    <section class="h-100 gradient-custom-2">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7">
+                    <div class="card">
+                        <div class="rounded-top text-white d-flex flex-row" style="background-color: #212529; height:200px;">
+                            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                                <img src="https://pyxis.nymag.com/v1/imgs/37d/875/23ecbc73dc440c7e6616b8fe7567d423f8-05-yourname.rsquare.w700.jpg" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1">
+
+                                {% if user == current_user %}
+                                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
+                                            style="z-index: 1;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                        Edit your profile
+                                    </button>
+                                    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form class="row g-3" method="post">
+                                                    <div class="modal-body">
+                                                        {{ form.hidden_tag() }}
+                                                        <div class="col-12">
+                                                            {{ form.username.label(class="form-label") }}
+                                                            {{ form.username(class="form-control")}}
+                                                        </div>
+                                                        <div class="col-12">
+                                                            {{ form.headline.label(class="form-label") }}
+                                                            {{ form.headline(class="form-control", maxlength="250")}}
+                                                        </div>
+                                                        <div class="col-12">
+                                                            {{ form.about_me.label(class="form-label") }}
+                                                            {{ form.about_me(class="form-control", maxlength="1000")}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        {{ form.submit(class="btn btn-primary") }}
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                            <div class="ms-3" style="margin-top: 130px;">
+                                <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                                <p>{{ user.headline }}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                            <div class="d-flex justify-content-end text-center py-1">
+                                <div>
+                                    <p class="mb-1 h5">253</p>
+                                    <p class="small text-muted mb-0">Posts</p>
                                 </div>
-                                <div class="col-12">
-                                    {{ form.headline.label(class="form-label") }}
-                                    {{ form.headline(class="form-control", maxlength="250")}}
+                                <div class="px-3">
+                                    <p class="mb-1 h5">69M</p>
+                                    <p class="small text-muted mb-0">Followers</p>
                                 </div>
-                                <div class="col-12">
-                                    {{ form.about_me.label(class="form-label") }}
-                                    {{ form.about_me(class="form-control", maxlength="1000")}}
+                                <div>
+                                    <p class="mb-1 h5">478</p>
+                                    <p class="small text-muted mb-0">Following</p>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                {{ form.submit(class="btn btn-primary") }}
-                            </div>
-                        </form>
+                        </div>
+                        <div class="card-body p-4 text-black">
+                            {% if user.about_me %}
+                                <p class="lead fw-normal mb-1">About</p>
+                                <div class="p-4" style="background-color: #f8f9fa;">
+                                    <p>{{ user.about_me }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    {% endif %}
+    </section>
+
 {% endblock %}
 
