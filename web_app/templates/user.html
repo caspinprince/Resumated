@@ -29,30 +29,30 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Edit Profile</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <form class="row g-3" method="post">
                                                     <div class="modal-body">
                                                         {{ form.hidden_tag() }}
                                                         <div class="col-12">
-                                                            {{ form.first_name.label(class="form-label") }}
+                                                            {{ form.first_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.first_name(class="form-control")}}
                                                         </div>
                                                         <div class="col-12">
-                                                            {{ form.last_name.label(class="form-label") }}
+                                                            {{ form.last_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.last_name(class="form-control")}}
                                                         </div>
                                                         <div class="col-12">
-                                                            {{ form.username.label(class="form-label") }}
+                                                            {{ form.username.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.username(class="form-control")}}
                                                         </div>
                                                         <div class="col-12">
-                                                            {{ form.headline.label(class="form-label") }}
+                                                            {{ form.headline.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.headline(class="form-control", maxlength="250")}}
                                                         </div>
                                                         <div class="col-12">
-                                                            {{ form.about_me.label(class="form-label") }}
+                                                            {{ form.about_me.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.about_me(class="form-control", maxlength="1000")}}
                                                         </div>
                                                     </div>
