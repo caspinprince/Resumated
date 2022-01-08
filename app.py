@@ -73,12 +73,16 @@ def user(username):
     form = EditProfileForm(request.form)
     user = User.query.filter_by(username=username).first_or_404()
     if form.validate_on_submit():
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
         user.username = form.username.data
         user.headline = form.headline.data
         user.about_me = form.about_me.data
         db.session.commit()
         return redirect(url_for('user', username=user.username))
     elif request.method == 'GET':
+        form.first_name.data = user.first_name
+        form.last_name.data = user.last_name
         form.username.data = user.username
         form.headline.data = user.headline
         form.about_me.data = user.about_me

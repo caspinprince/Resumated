@@ -32,6 +32,8 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Username is already taken!')
 
 class EditProfileForm(FlaskForm):
+    first_name = StringField('Username', validators=[DataRequired()])
+    last_name = StringField('Username', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
     headline = StringField('Headline', validators=[Length(min=0, max=250)])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=1000)])

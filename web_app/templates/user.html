@@ -36,6 +36,14 @@
                                                     <div class="modal-body">
                                                         {{ form.hidden_tag() }}
                                                         <div class="col-12">
+                                                            {{ form.first_name.label(class="form-label") }}
+                                                            {{ form.first_name(class="form-control")}}
+                                                        </div>
+                                                        <div class="col-12">
+                                                            {{ form.last_name.label(class="form-label") }}
+                                                            {{ form.last_name(class="form-control")}}
+                                                        </div>
+                                                        <div class="col-12">
                                                             {{ form.username.label(class="form-label") }}
                                                             {{ form.username(class="form-control")}}
                                                         </div>
