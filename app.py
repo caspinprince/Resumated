@@ -12,12 +12,12 @@ app.register_blueprint(blueprint, url_prefix='/signup_google')
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    if current_user.is_authenticated:
+        users = User.query.all()
+        return render_template('user_home.html', users=users)
+    else:
+        return render_template('home.html')
 
-@app.route('/user_home')
-@login_required
-def user_home():
-    return render_template('user_home.html')
 
 @app.route('/logout')
 @login_required
@@ -38,7 +38,7 @@ def login():
             next = request.args.get('next')
 
             if next is None or not next[0]=='/':
-                next = url_for('user_home')
+                next = url_for('home')
 
             return redirect(next)
 
@@ -87,6 +87,11 @@ def user(username):
         form.headline.data = user.headline
         form.about_me.data = user.about_me
     return render_template('user.html', user=user, form=form)
+
+@app.route('/explore')
+@login_required
+def explore():
+    return render_template('home.html')
 
 @app.before_request
 def before_request():
