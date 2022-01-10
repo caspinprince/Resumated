@@ -6,8 +6,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from web_app.models import User
 from web_app.forms import LoginForm, RegistrationForm, EditProfileForm
 from web_app.oauth import blueprint
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from utilities import time_diff
 app.register_blueprint(blueprint, url_prefix='/signup_google')
 
 @app.route('/')
@@ -72,6 +72,7 @@ def signup():
 def user(username):
     form = EditProfileForm(request.form)
     user = User.query.filter_by(username=username).first_or_404()
+    last_seen = time_diff(user.last_online)
     if form.validate_on_submit():
         user.first_name = form.first_name.data
         user.last_name = form.last_name.data
@@ -86,7 +87,7 @@ def user(username):
         form.username.data = user.username
         form.headline.data = user.headline
         form.about_me.data = user.about_me
-    return render_template('user.html', user=user, form=form)
+    return render_template('user.html', user=user, form=form, last_seen=last_seen)
 
 @app.route('/explore')
 @login_required
