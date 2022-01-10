@@ -27,3 +27,42 @@
     border-radius: 50%;
 }
 
+.profile-link{
+    color: black;
+}
+
+.profile-link:link {
+    color: black;
+    text-decoration: none;
+}
+
+.profile-link:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+.profile-card-headline {
+    color: gray;
+    font-weight: 350;
+    display: block;
+    line-height: 1.5rem !important;
+    max-height: 3rem;
+    height: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.profile-card-about-me {
+    display: block;
+    line-height: 1.5rem !important;
+    max-height: 4.5rem;
+    height: 4.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
