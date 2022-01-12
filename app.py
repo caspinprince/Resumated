@@ -4,8 +4,9 @@ from web_app import app, db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
 from web_app.models import User
-from web_app.forms import LoginForm, RegistrationForm, EditProfileForm
-from web_app.oauth import blueprint
+from web_app.general.forms import EditProfileForm
+from web_app.auth.forms import LoginForm, RegistrationForm
+from web_app.auth.oauth import blueprint
 from datetime import datetime, timedelta
 from utilities import time_diff
 app.register_blueprint(blueprint, url_prefix='/signup_google')

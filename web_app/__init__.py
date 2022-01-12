@@ -14,6 +14,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+from web_app.auth import bp as auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
+from web_app.general import bp as general_bp
+app.register_blueprint(general_bp)
+
+from web_app.auth.oauth import blueprint as google_bp
+app.register_blueprint(google_bp, url_prefix='/signup_google')
+
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
