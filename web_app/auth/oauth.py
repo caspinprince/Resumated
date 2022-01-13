@@ -3,7 +3,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from sqlalchemy.orm.exc import NoResultFound
 from flask_login import current_user, login_user
 from flask_dance.consumer import oauth_authorized
-from web_app import app, db
+from web_app import db
 from web_app.models import User
 from flask import redirect, url_for
 
@@ -37,4 +37,4 @@ def google_logged_in(blueprint, token):
             db.session.commit()
         login_user(user)
 
-        return redirect(url_for('home'))
+        return redirect(url_for('general.home'))
