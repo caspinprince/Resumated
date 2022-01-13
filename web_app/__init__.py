@@ -4,25 +4,30 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import pymysql
 from flask_migrate import Migrate
+from config import Config
+
 login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+db = SQLAlchemy()
+migrate = Migrate()
 
-app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-from web_app.auth import bp as auth_bp
-app.register_blueprint(auth_bp, url_prefix='/auth')
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
 
-from web_app.general import bp as general_bp
-app.register_blueprint(general_bp)
+    from web_app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
-from web_app.auth.oauth import blueprint as google_bp
-app.register_blueprint(google_bp, url_prefix='/signup_google')
+    from web_app.general import bp as general_bp
+    app.register_blueprint(general_bp)
 
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+    from web_app.auth.oauth import blueprint as google_bp
+    app.register_blueprint(google_bp, url_prefix='/signup_google')
+    return app
 
+from web_app import models

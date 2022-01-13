@@ -1,22 +1,25 @@
 import os
 from flask_dance.contrib.google import make_google_blueprint, google
-from web_app import app, db
+from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
 from web_app.models import User
 from web_app.general.forms import EditProfileForm
 from datetime import datetime, timedelta
 from utilities import time_diff
+from web_app.general import bp
 
-@app.route('/')
+
+@bp.route('/')
 def home():
     if current_user.is_authenticated:
         users = User.query.all()
-        return render_template('user_home.html', users=users)
+        return render_template('general/user_home.html', users=users)
     else:
-        return render_template('home.html')
+        return render_template('general/home.html')
 
-@app.route('/user/<username>', methods=['GET', 'POST'])
+
+@bp.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
     form = EditProfileForm(request.form)
@@ -29,16 +32,17 @@ def user(username):
         user.headline = form.headline.data
         user.about_me = form.about_me.data
         db.session.commit()
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('general.user', username=user.username))
     elif request.method == 'GET':
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
         form.username.data = user.username
         form.headline.data = user.headline
         form.about_me.data = user.about_me
-    return render_template('user.html', user=user, form=form, last_seen=last_seen)
+    return render_template('general/user.html', user=user, form=form, last_seen=last_seen)
 
-@app.before_request
+
+@bp.before_request
 def before_request():
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first_or_404()

@@ -1,17 +1,18 @@
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
 from web_app.models import User
-from web_app import app, db
+from web_app import db
 from web_app.auth.forms import LoginForm, RegistrationForm
+from web_app.auth import bp
 
-@app.route('/logout')
+@bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("You logged out!")
-    return redirect(url_for('home'))
+    return redirect(url_for('general.home'))
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -23,19 +24,19 @@ def login():
             next = request.args.get('next')
 
             if next is None or not next[0]=='/':
-                next = url_for('home')
+                next = url_for('general.home')
 
             return redirect(next)
 
-    return render_template('login.html', form=form)
+    return render_template('auth/login.html', form=form)
 
-@app.route('/signup_google', methods=['GET', 'POST'])
+@bp.route('/signup_google', methods=['GET', 'POST'])
 def signup_google():
     return redirect(url_for('google.login'))
 
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegistrationForm(request.form)
 
@@ -50,4 +51,4 @@ def signup():
         flash("Thanks for signing up!")
         return redirect(url_for('login'))
 
-    return render_template('signup.html', form=form)
+    return render_template('auth/signup.html', form=form)
