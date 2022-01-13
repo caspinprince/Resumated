@@ -30,15 +30,3 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, username):
         if User.query.filter_by(username=username.data).first():
             raise ValidationError('Username is already taken!')
-
-class EditProfileForm(FlaskForm):
-    first_name = StringField('First Name', validators=[DataRequired()])
-    last_name = StringField('Last Name', validators=[DataRequired()])
-    username = StringField('Username', validators=[DataRequired()])
-    headline = StringField('Headline', validators=[Length(min=0, max=250)])
-    about_me = TextAreaField('About me', validators=[Length(min=0, max=1000)])
-    submit = SubmitField('Submit')
-
-    def validate_username(self, username):
-        if User.query.filter_by(username=username.data).first() and username.data != current_user.username:
-            raise ValidationError('Username is already taken!')
