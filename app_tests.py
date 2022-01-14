@@ -87,5 +87,44 @@ class TestWebApp(unittest.TestCase):
         assert response.request.path == '/'
 
 
+    def test_duplicate_email(self):
+        self.client.post('/auth/signup', data={
+            'email': 'tester@testing.com',
+            'first_name': 'Testing',
+            'last_name': 'Person',
+            'username': 'tester',
+            'password': 'qwertyuiop',
+            'password_conf': 'qwertyuiop',
+        })
+        response = self.client.post('/auth/signup', data={
+            'email': 'tester@testing.com',
+            'first_name': 'Testing',
+            'last_name': 'Person',
+            'username': 'tester2',
+            'password': 'qwertyuiop',
+            'password_conf': 'qwertyuiop',
+        })
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Email is already registered!' in html
 
-
+    def test_duplicate_username(self):
+        self.client.post('/auth/signup', data={
+            'email': '123@gmail.com',
+            'first_name': 'Testing',
+            'last_name': 'Person',
+            'username': 'tester',
+            'password': 'qwertyuiop',
+            'password_conf': 'qwertyuiop',
+        })
+        response = self.client.post('/auth/signup', data={
+            'email': 'tester@testing.com',
+            'first_name': 'Testing',
+            'last_name': 'Person',
+            'username': 'tester',
+            'password': 'qwertyuiop',
+            'password_conf': 'qwertyuiop',
+        })
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Username is already taken!' in html
