@@ -42,7 +42,6 @@ class TestWebApp(unittest.TestCase):
             'email': 'example@example.com',
             'password': 'qwertyuiop',
         })
-        assert response.status_code == 200
 
     def test_app(self):
         assert self.app is not None
@@ -128,3 +127,16 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
         html = response.get_data(as_text=True)
         assert 'Username is already taken!' in html
+
+    def test_user_home(self):
+        self.login()
+        response = self.client.get('/')
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Explore' in html
+
+    def test_guest_home(self):
+        response = self.client.get('/')
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Explore' not in html
