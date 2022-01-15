@@ -1,9 +1,10 @@
 import os
 import unittest
-from flask import current_app
+from flask import current_app, url_for, request
 from app import create_app, db
 from web_app.models import User
 from config import Config
+from flask_login import current_user
 
 
 class TestConfig(Config):
@@ -34,14 +35,26 @@ class TestWebApp(unittest.TestCase):
     def populate_db(self):
         user = User(email='example@example.com', first_name='Johnny', last_name='Appleseed',
                     username='example', password='qwertyuiop')
+        user_two = User(email='example_two@example.com', first_name='Bill', last_name='Bob',
+                        username='example_two', password='qwertyuiop')
         db.session.add(user)
+        db.session.add(user_two)
         db.session.commit()
 
-    def login(self):
-        self.client.post('/auth/login', data={
-            'email': 'example@example.com',
-            'password': 'qwertyuiop',
-        })
+    def login(self, user=1):
+        if user == 1:
+            return self.client.post('/auth/login', data={
+                'email': 'example@example.com',
+                'password': 'qwertyuiop',
+            }, follow_redirects=True)
+        elif user == 2:
+            return self.client.post('/auth/login', data={
+                'email': 'example_two@example.com',
+                'password': 'qwertyuiop',
+            }, follow_redirects=True)
+
+    def logout(self):
+        return self.client.get('/auth/logout', follow_redirects=True)
 
     def test_app(self):
         assert self.app is not None
@@ -140,3 +153,73 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
         html = response.get_data(as_text=True)
         assert 'Explore' not in html
+
+    def test_user_profile(self):
+        self.login()
+        response = self.client.get('/user/example')
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Johnny Appleseed' in html
+        assert 'Online' in html
+
+    def test_edit_profile(self):
+        self.login()
+        response = self.client.post('/user/example', data={
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'modifiedexample',
+            'headline': 'example headline',
+            'about_me': 'example about me',
+        },follow_redirects=True)
+
+        assert response.status_code == 200
+        assert response.request.path == '/user/modifiedexample'
+        html = response.get_data(as_text=True)
+        assert 'John Doe' in html
+        assert 'example headline' in html
+        assert 'example about me' in html
+
+        response = self.client.get('/user/modifiedexample')
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'modifiedexample' in html
+
+    def test_invalid_login(self):
+        response = self.client.post('/auth/login', data={
+            'email': 'wrongexample@example.com',
+            'password': 'qwertyuiop',
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert response.request.path == '/auth/login'
+
+    def test_logout(self):
+        self.login()
+        response = self.logout()
+        assert response.status_code == 200
+        html = response.get_data(as_text=True)
+        assert 'Explore' not in html
+
+    def test_invalid_edit_profile(self):
+        self.login()
+        response = self.client.post('/user/example', data={
+            'username': 'example'
+        },follow_redirects=True)
+        assert response.status_code == 200
+        assert response.request.path == '/user/example'
+
+    def test_edit_username_duplicate(self):
+        self.login(user=2)
+        response = self.client.post('/user/example_two', data={
+            'first_name': 'Bill',
+            'last_name': 'Bob',
+            'username': 'example'
+        },follow_redirects=True)
+
+        assert response.status_code == 200
+        assert response.request.path == '/user/example_two'
+        html = response.get_data(as_text=True)
+        assert 'Bill Bob' in html
+        assert 'Username is already taken!' in html
+
+    def test_google_auth_login(self):
+        pass
