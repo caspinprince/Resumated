@@ -17,7 +17,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user.password_check(form.password.data) and user is not None:
+        if user is not None and user.password_check(password=form.password.data):
             login_user(user, remember=form.remember_me.data)
             flash('Logged in!')
 
@@ -49,6 +49,6 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash("Thanks for signing up!")
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
 
     return render_template('auth/signup.html', form=form)
