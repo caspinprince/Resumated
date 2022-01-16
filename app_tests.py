@@ -1,3 +1,5 @@
+# run with command: pytest --cov=web_app --cov-report=term-missing --cov-branch app_tests*
+
 import os
 import unittest
 from flask import current_app, url_for, request
