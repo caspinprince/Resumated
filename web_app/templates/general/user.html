@@ -32,7 +32,7 @@
                                                     <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Edit Profile</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <form class="row g-3" method="post">
+                                                <form class="row g-3" method="post" enctype="multipart/form-data">
                                                     <div class="modal-body">
                                                         {{ form.hidden_tag() }}
                                                         <div class="col-12">
@@ -54,6 +54,10 @@
                                                         <div class="col-12">
                                                             {{ form.about_me.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.about_me(class="form-control", maxlength="1000")}}
+                                                        </div>
+                                                        <div class="col-12">
+                                                            {{ form.profile_pic.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                                                            {{ form.profile_pic(class="form-control-file")}}
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
