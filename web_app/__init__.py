@@ -20,11 +20,6 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
     from web_app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
