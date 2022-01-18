@@ -6,15 +6,21 @@ from flask_login import current_user, login_required
 from web_app.models import User
 from web_app.general.forms import EditProfileForm
 from datetime import datetime, timedelta
-from utilities import time_diff
+from web_app.utilities import time_diff, upload_to_s3, generate_url
 from web_app.general import bp
+from werkzeug.utils import secure_filename
 
+
+IMAGE_UPLOAD_FOLDER = "web_app/images"
+BUCKET = "rezume-files"
 
 @bp.route('/')
 def home():
     if current_user.is_authenticated:
         users = User.query.all()
-        return render_template('general/user_home.html', users=users)
+        pfp_links = {user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg") for user in users}
+        pfp_url = pfp_links[current_user.username]
+        return render_template('general/user_home.html', users=users, pfp_links=pfp_links, pfp_url=pfp_url)
     else:
         return render_template('general/home.html')
 
@@ -25,22 +31,32 @@ def user(username):
     form = EditProfileForm(request.form)
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+
     if form.validate_on_submit():
+        try:
+            img = request.files['profile_pic']
+            content_type = request.mimetype
+            upload_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+        except:
+            pass
+
         user.first_name = form.first_name.data
         user.last_name = form.last_name.data
         user.username = form.username.data
         user.headline = form.headline.data
         user.about_me = form.about_me.data
         db.session.commit()
-        return redirect(url_for('general.user', username=user.username))
+        return redirect(url_for('general.user', username=user.username, pfp_url=pfp_url))
     elif request.method == 'GET':
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
         form.username.data = user.username
         form.headline.data = user.headline
         form.about_me.data = user.about_me
-    return render_template('general/user.html', user=user, form=form, last_seen=last_seen)
 
+    return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url)
 
 @bp.before_request
 def before_request():
@@ -48,3 +64,4 @@ def before_request():
         user = User.query.filter_by(username=current_user.username).first_or_404()
         user.last_online = datetime.utcnow()
         db.session.commit()
+

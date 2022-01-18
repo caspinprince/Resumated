@@ -15,6 +15,7 @@ blueprint = make_google_blueprint(client_id=os.environ.get("GOOGLE_OAUTH_CLIENT_
 def google_logged_in(blueprint, token):
     resp = google.get('/oauth2/v2/userinfo')
     if resp.ok:
+        print(resp.json())
         google_id = resp.json()['id']
         email = resp.json()['email']
         first_name = resp.json()['given_name']

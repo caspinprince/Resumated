@@ -66,3 +66,12 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
 }
+
+.pfp {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+}

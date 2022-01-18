@@ -2,6 +2,7 @@ from web_app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
+import uuid
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -20,6 +21,7 @@ class User(db.Model, UserMixin):
     about_me = db.Column(db.String(1000), default="")
     headline = db.Column(db.String(250), default="")
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
+    pfp_id = db.Column(db.String(50), unique=True)
 
     def __init__(self, first_name, last_name, email, username, password=None, google_id=None):
         self.first_name = first_name
@@ -28,6 +30,7 @@ class User(db.Model, UserMixin):
         self.username = username
         self.password_hash = generate_password_hash(password) if password is not None else None
         self.google_id = google_id
+        self.pfp_id = uuid.uuid4()
 
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)

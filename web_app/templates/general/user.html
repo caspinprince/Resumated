@@ -18,7 +18,10 @@
                     <div class="card" style="border-radius: 10px;">
                         <div class="text-white d-flex flex-row" style="border-radius: 10px 10px 0px 0px; background-color: #212529; height:200px;">
                             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                                <img src="https://pyxis.nymag.com/v1/imgs/37d/875/23ecbc73dc440c7e6616b8fe7567d423f8-05-yourname.rsquare.w700.jpg" alt="Generic placeholder image" class="img-fluid rounded-circle img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1">
+                                <div class="pfp mb-2 mt-4" style="z-index: 1">
+                                    <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
+                                         class="pfp img-fluid img-thumbnail" style="z-index: -1">
+                                </div>
 
                                 {% if user == current_user %}
                                     <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
@@ -32,7 +35,7 @@
                                                     <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Edit Profile</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <form class="row g-3" method="post">
+                                                <form class="row g-3" method="post" enctype="multipart/form-data">
                                                     <div class="modal-body">
                                                         {{ form.hidden_tag() }}
                                                         <div class="col-12">
@@ -54,6 +57,10 @@
                                                         <div class="col-12">
                                                             {{ form.about_me.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
                                                             {{ form.about_me(class="form-control", maxlength="1000")}}
+                                                        </div>
+                                                        <div class="col-12 mt-2" style="color: black; margin-bottom: -10px;">
+                                                            {{ form.profile_pic.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                                                            {{ form.profile_pic(class="form-control")}}
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
