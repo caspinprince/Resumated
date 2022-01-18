@@ -35,9 +35,12 @@ def user(username):
     pfp_url = generate_url(BUCKET, pfp_file)
 
     if form.validate_on_submit():
-        img = request.files['profile_pic']
-        content_type = request.mimetype
-        upload_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+        try:
+            img = request.files['profile_pic']
+            content_type = request.mimetype
+            upload_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+        except:
+            pass
 
         user.first_name = form.first_name.data
         user.last_name = form.last_name.data
