@@ -19,7 +19,8 @@
                         <div class="text-white d-flex flex-row" style="border-radius: 10px 10px 0px 0px; background-color: #212529; height:200px;">
                             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
                                 <div class="pfp mb-2 mt-4" style="z-index: 1">
-                                    <img src={{ pfp_url }} class="pfp img-fluid img-thumbnail" style="z-index: -1">
+                                    <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
+                                         class="pfp img-fluid img-thumbnail" style="z-index: -1">
                                 </div>
 
                                 {% if user == current_user %}

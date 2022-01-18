@@ -18,7 +18,7 @@
                 <a href={{ url_for('general.home') }} class="btn btn-outline-light me-2">Explore</a>
                 <div class="dropdown">
                     <a href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src={{ pfp_url }}
+                        <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
                              alt="Generic placeholder image" class="img-fluid rounded-circle" style="width: 40px; z-index: 1">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
