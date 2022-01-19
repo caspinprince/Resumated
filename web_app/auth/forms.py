@@ -12,6 +12,17 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Log in')
 
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first() is None:
+            raise ValidationError("Email is not registered!")
+
+    def validate_password(self, field):
+        user = User.query.filter_by(email=self.email.data).first()
+        if user is not None and (user.password_hash is None or not user.password_check(password=field.data)):
+            raise ValidationError("Incorrect password!")
+
+
+
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     first_name = StringField('First Name', validators=[DataRequired()])
