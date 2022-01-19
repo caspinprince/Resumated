@@ -100,29 +100,7 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
         assert response.request.path == '/'
 
-
-    def test_duplicate_email(self):
-        self.client.post('/auth/signup', data={
-            'email': 'tester@testing.com',
-            'first_name': 'Testing',
-            'last_name': 'Person',
-            'username': 'tester',
-            'password': 'qwertyuiop',
-            'password_conf': 'qwertyuiop',
-        })
-        response = self.client.post('/auth/signup', data={
-            'email': 'tester@testing.com',
-            'first_name': 'Testing',
-            'last_name': 'Person',
-            'username': 'tester2',
-            'password': 'qwertyuiop',
-            'password_conf': 'qwertyuiop',
-        })
-        assert response.status_code == 200
-        html = response.get_data(as_text=True)
-        assert 'Email is already registered!' in html
-
-    def test_duplicate_username(self):
+    def test_duplicate_username_email(self):
         self.client.post('/auth/signup', data={
             'email': '123@gmail.com',
             'first_name': 'Testing',
@@ -132,7 +110,7 @@ class TestWebApp(unittest.TestCase):
             'password_conf': 'qwertyuiop',
         })
         response = self.client.post('/auth/signup', data={
-            'email': 'tester@testing.com',
+            'email': '123@gmail.com',
             'first_name': 'Testing',
             'last_name': 'Person',
             'username': 'tester',
@@ -142,6 +120,7 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
         html = response.get_data(as_text=True)
         assert 'Username is already taken!' in html
+        assert 'Email is already registered!' in html
 
     def test_user_home(self):
         self.login()
@@ -186,13 +165,26 @@ class TestWebApp(unittest.TestCase):
         html = response.get_data(as_text=True)
         assert 'modifiedexample' in html
 
-    def test_invalid_login(self):
+    def test_invalid_login_email(self):
         response = self.client.post('/auth/login', data={
             'email': 'wrongexample@example.com',
             'password': 'qwertyuiop',
         }, follow_redirects=True)
         assert response.status_code == 200
         assert response.request.path == '/auth/login'
+        html = response.get_data(as_text=True)
+        print(html)
+        assert 'Email is not registered!' in html
+
+    def test_invalid_login_password(self):
+        response = self.client.post('/auth/login', data={
+            'email': 'example_two@example.com',
+            'password': 'asfasasdfadsf',
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert response.request.path == '/auth/login'
+        html = response.get_data(as_text=True)
+        assert 'Incorrect password!' in html
 
     def test_logout(self):
         self.login()

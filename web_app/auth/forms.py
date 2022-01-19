@@ -17,7 +17,7 @@ class LoginForm(FlaskForm):
             raise ValidationError("Email is not registered!")
 
     def validate_password(self, field):
-        user = User.query.filter_by(email='caspinprince@gmail.com').first()
+        user = User.query.filter_by(email=self.email.data).first()
         if user is not None and (user.password_hash is None or not user.password_check(password=field.data)):
             raise ValidationError("Incorrect password!")
 
