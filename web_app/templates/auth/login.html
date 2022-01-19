@@ -13,9 +13,19 @@
                         {{ form.hidden_tag() }}
                         <div class="form-outline mb-4">
                             {{ form.email(class="form-control form-control-lg", placeholder="Email Address") }}
+                            <div class="form-error-text">
+                                {% if form.errors['email'] %}
+                                    {{ form.errors['email'][0] }}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="form-outline mb-4">
                             {{ form.password(class="form-control form-control-lg", placeholder="Password") }}
+                            <div class="form-error-text">
+                                {% if form.errors['password'] %}
+                                    {{ form.errors['password'][0] }}
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="d-flex mb-4">
