@@ -20,5 +20,10 @@ class EditProfileForm(FlaskForm):
         if User.query.filter_by(username=username.data).first() and username.data != current_user.username:
             raise ValidationError('Username is already taken!')
 
+class UploadDocForm(FlaskForm):
+    filename = StringField('File Name', validators=[DataRequired()])
+    document = FileField('Upload a document! (PDF only)', validators=[FileAllowed(['pdf']), FileSize(max_size=1)])
+    submit = SubmitField('Submit')
+
 
 
