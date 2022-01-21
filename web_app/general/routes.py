@@ -3,7 +3,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User
+from web_app.models import User, File
 from web_app.general.forms import EditProfileForm, UploadDocForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
@@ -58,13 +58,14 @@ def user(username):
 
     return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url)
 
+
 @bp.route('/user_files/<username>', methods=['GET', 'POST'])
 @login_required
 def user_files(username):
     if current_user.username != username:
         return redirect(url_for('general.home'))
 
-    form = UploadDocForm(request.form)
+    form = UploadDocForm()
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
@@ -72,13 +73,15 @@ def user_files(username):
     if form.validate_on_submit():
         try:
             filename = form.filename.data
-            doc = request.files['document']
-            content_type = request.mimetype
-            upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}.pdf", content_type)
+            doc = form.document.data
+            content_type = form.document.data.mimetype
+            upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type)
+            file = File(filename=filename, user_id=user.id)
+            db.session.add(file)
+            db.session.commit()
+            return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
         except:
             pass
-
-
 
     return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form)
 

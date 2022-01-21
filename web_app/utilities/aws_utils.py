@@ -15,7 +15,7 @@ def crop_square(pil_img):
 
 def upload_pfp_to_s3(image_file, bucket, file_name, content_type):
     img_bytes = io.BytesIO()
-    image = crop_square(Image.open(image_file)).save(img_bytes, format='PNG')
+    crop_square(Image.open(image_file)).save(img_bytes, format='PNG')
     byteArr = img_bytes.getvalue()
     s3_client = boto3.client('s3')
     response = s3_client.put_object(Body=byteArr, Bucket=bucket, Key=file_name, ContentType=content_type)
