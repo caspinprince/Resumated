@@ -16,7 +16,8 @@
                     <h5 class="modal-title" id="uploadDocLabel" style="color: black;">Upload Document</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row g-3" method="post">
+                <form class="row g-3" method="post" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
                     <div class="modal-body">
                         {{ form.hidden_tag() }}
                         <div class="col-12">
@@ -35,6 +36,24 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Last Modified</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in file_list %}
+                <tr>
+                    <th scope="row"><a href={{ file_list[file]['url'] }}>{{ file }}</a></th>
+                    <td>{{ file_list[file]['last_modified'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}

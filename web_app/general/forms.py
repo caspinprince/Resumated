@@ -7,6 +7,7 @@ from flask_wtf.file import FileAllowed, FileSize, FileRequired
 
 from web_app.models import User
 
+
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
@@ -20,9 +21,10 @@ class EditProfileForm(FlaskForm):
         if User.query.filter_by(username=username.data).first() and username.data != current_user.username:
             raise ValidationError('Username is already taken!')
 
+
 class UploadDocForm(FlaskForm):
     filename = StringField('File Name', validators=[DataRequired()])
-    document = FileField(label='Upload a document! (PDF only)', validators=[FileRequired(), FileAllowed(['pdf'])])
+    document = FileField(label='Upload a document! (PDF only)', validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Submit')
 
 

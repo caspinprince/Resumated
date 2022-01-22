@@ -1,7 +1,7 @@
 from web_app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 @login_manager.user_loader
@@ -42,5 +42,6 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
+    last_modified = db.Column(db.DateTime, default=datetime.utcnow)
 
 

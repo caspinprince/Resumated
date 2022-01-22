@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
 from web_app.general import bp
 from werkzeug.utils import secure_filename
-
+from werkzeug.datastructures import CombinedMultiDict
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -65,25 +65,34 @@ def user_files(username):
     if current_user.username != username:
         return redirect(url_for('general.home'))
 
-    form = UploadDocForm()
+    form = UploadDocForm(CombinedMultiDict((request.files, request.form)))
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
     if form.validate_on_submit():
         try:
-            filename = form.filename.data
             doc = form.document.data
-            content_type = form.document.data.mimetype
+            filename = doc.filename
+            content_type = request.mimetype
             upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type)
-            file = File(filename=filename, user_id=user.id)
-            db.session.add(file)
+            check = File.query.filter_by(filename=filename, user_id=user.id).first()
+            if check is not None:
+                check.last_modified = datetime.utcnow()
+            else:
+                file = File(filename=filename, user_id=user.id)
+                db.session.add(file)
             db.session.commit()
-            return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
         except:
             pass
+        return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
 
-    return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form)
+    elif request.method == 'GET':
+        files = File.query.filter_by(user_id=user.id)
+        file_list = {file.filename: {'last_modified': file.last_modified, 'url': generate_url(BUCKET, f"documents/{user.pfp_id}{file.filename}")}
+                     for file in files}
+
+    return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
 
 
 @bp.before_request

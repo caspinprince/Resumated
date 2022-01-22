@@ -9,7 +9,7 @@ from config import Config
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 db = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 
 
 def create_app(config_class=Config):
