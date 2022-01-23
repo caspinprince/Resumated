@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container m-4">
+        <h2>
+            Documents
+        </h2>
+        <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
+                style="z-index: 1;" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+            Upload
+        </button>
+    </div>
+    <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-labelledby="uploadDocLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadDocLabel" style="color: black;">Upload Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="row g-3" method="post" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <div class="modal-body">
+                        {{ form.hidden_tag() }}
+                        <div class="col-12">
+                            {{ form.filename.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ form.filename(class="form-control", id="filename") }}
+                        </div>
+                        <div class="col-12 mt-2" style="color: black; margin-bottom: -10px;">
+                            {{ form.document.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ form.document(class="form-control", onchange="$('#filename').val($(this).val().slice(12));") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <table id="fileTable" class="table table-bordered">
+            <thead>
+            <tr>
+                <th class="th-sm" scope="col">Name</th>
+                <th class="th-sm" scope="col">Last Modified</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in file_list %}
+                <tr>
+                    <th scope="row"><a href={{ url_for('general.document', user_id = current_user.id, filename=file) }}>{{ file }}</a></th>
+                    <td>{{ file_list[file] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

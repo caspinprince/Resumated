@@ -13,12 +13,17 @@ def crop_square(pil_img):
                          (img_height + crop_height) // 2))
 
 
-def upload_to_s3(image_file, bucket, file_name, content_type):
+def upload_pfp_to_s3(image_file, bucket, file_name, content_type):
     img_bytes = io.BytesIO()
-    image = crop_square(Image.open(image_file)).save(img_bytes, format='PNG')
+    crop_square(Image.open(image_file)).save(img_bytes, format='PNG')
     byteArr = img_bytes.getvalue()
     s3_client = boto3.client('s3')
     response = s3_client.put_object(Body=byteArr, Bucket=bucket, Key=file_name, ContentType=content_type)
+    return response
+
+def upload_doc_to_s3(doc_file, bucket, file_name, content_type):
+    s3_client = boto3.client('s3')
+    response = s3_client.put_object(Body=doc_file, Bucket=bucket, Key=file_name, ContentType=content_type)
     return response
 
 def generate_url(bucket_name, object_name):

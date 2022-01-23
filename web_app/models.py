@@ -1,7 +1,7 @@
 from web_app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 @login_manager.user_loader
@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     headline = db.Column(db.String(250), default="")
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
     pfp_id = db.Column(db.String(50), unique=True)
+    files = db.relationship('File', lazy=True, backref='User_Info')
 
     def __init__(self, first_name, last_name, email, username, password=None, google_id=None):
         self.first_name = first_name
@@ -34,4 +35,13 @@ class User(db.Model, UserMixin):
 
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
+
+class File(db.Model):
+    __tablename__='File'
+
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(250), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
+    last_modified = db.Column(db.DateTime, default=datetime.utcnow)
+
 

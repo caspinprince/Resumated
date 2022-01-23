@@ -3,9 +3,10 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from flask import render_template, redirect, url_for
 from flask_login import current_user
-from flask_wtf.file import FileAllowed, FileSize
+from flask_wtf.file import FileAllowed, FileSize, FileRequired
 
 from web_app.models import User
+
 
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
@@ -19,6 +20,12 @@ class EditProfileForm(FlaskForm):
     def validate_username(self, username):
         if User.query.filter_by(username=username.data).first() and username.data != current_user.username:
             raise ValidationError('Username is already taken!')
+
+
+class UploadDocForm(FlaskForm):
+    filename = StringField('File Name', validators=[DataRequired()])
+    document = FileField(label='Upload a document! (PDF only)', validators=[FileAllowed(['pdf'])])
+    submit = SubmitField('Submit')
 
 
 

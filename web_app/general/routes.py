@@ -3,13 +3,14 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User
-from web_app.general.forms import EditProfileForm
+from web_app.models import User, File
+from web_app.general.forms import EditProfileForm, UploadDocForm
 from datetime import datetime, timedelta
-from web_app.utilities import time_diff, upload_to_s3, generate_url
+from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
 from web_app.general import bp
 from werkzeug.utils import secure_filename
-
+from werkzeug.datastructures import CombinedMultiDict
+import urllib.parse
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -38,7 +39,7 @@ def user(username):
         try:
             img = request.files['profile_pic']
             content_type = request.mimetype
-            upload_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+            upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
         except:
             pass
 
@@ -57,6 +58,50 @@ def user(username):
         form.about_me.data = user.about_me
 
     return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url)
+
+
+@bp.route('/user_files/<username>', methods=['GET', 'POST'])
+@login_required
+def user_files(username):
+    if current_user.username != username:
+        return redirect(url_for('general.home'))
+
+    form = UploadDocForm(CombinedMultiDict((request.files, request.form)))
+    user = User.query.filter_by(username=username).first_or_404()
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    files = File.query.filter_by(user_id=user.id)
+    file_list = {file.filename: file.last_modified for file in files}
+
+    if form.validate_on_submit():
+        try:
+            doc = form.document.data
+            filename = doc.filename
+            content_type = request.mimetype
+            upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type)
+            check = File.query.filter_by(filename=filename, user_id=user.id).first()
+            if check is not None:
+                check.last_modified = datetime.utcnow()
+            else:
+                file = File(filename=filename, user_id=user.id)
+                db.session.add(file)
+            db.session.commit()
+        except:
+            pass
+        return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
+
+    return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
+
+
+@bp.route('/document/<user_id>/<filename>', methods=['GET', 'POST'])
+@login_required
+def document(user_id, filename):
+    user = User.query.filter_by(id=user_id).first_or_404()
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/document.html',
+                           file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")), pfp_url=pfp_url)
+
 
 @bp.before_request
 def before_request():
