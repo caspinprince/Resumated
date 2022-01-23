@@ -102,6 +102,14 @@ def document(user_id, filename):
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")), pfp_url=pfp_url)
 
+@bp.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    user = User.query.filter_by(id=current_user.id).first_or_404()
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/settings.html', pfp_url=pfp_url)
+
 
 @bp.before_request
 def before_request():
