@@ -22,11 +22,11 @@
                         {{ form.hidden_tag() }}
                         <div class="col-12">
                             {{ form.filename.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
-                            {{ form.filename(class="form-control", id="filename")}}
+                            {{ form.filename(class="form-control", id="filename") }}
                         </div>
                         <div class="col-12 mt-2" style="color: black; margin-bottom: -10px;">
                             {{ form.document.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
-                            {{ form.document(class="form-control", onchange="$('#filename').val($(this).val().slice(12));")}}
+                            {{ form.document(class="form-control", onchange="$('#filename').val($(this).val().slice(12));") }}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -38,18 +38,18 @@
         </div>
     </div>
     <div class="container">
-        <table class="table">
+        <table id="fileTable" class="table table-bordered">
             <thead>
             <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Last Modified</th>
+                <th class="th-sm" scope="col">Name</th>
+                <th class="th-sm" scope="col">Last Modified</th>
             </tr>
             </thead>
             <tbody>
             {% for file in file_list %}
                 <tr>
-                    <th scope="row"><a href={{ file_list[file]['url'] }}>{{ file }}</a></th>
-                    <td>{{ file_list[file]['last_modified'] }}</td>
+                    <th scope="row"><a href={{ url_for('general.document', user_id = current_user.id, filename=file) }}>{{ file }}</a></th>
+                    <td>{{ file_list[file] }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -57,4 +57,3 @@
     </div>
 
 {% endblock %}
-

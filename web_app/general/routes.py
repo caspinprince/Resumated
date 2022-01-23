@@ -10,6 +10,7 @@ from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, gen
 from web_app.general import bp
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
+import urllib.parse
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -69,6 +70,8 @@ def user_files(username):
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
+    files = File.query.filter_by(user_id=user.id)
+    file_list = {file.filename: file.last_modified for file in files}
 
     if form.validate_on_submit():
         try:
@@ -87,12 +90,17 @@ def user_files(username):
             pass
         return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
 
-    elif request.method == 'GET':
-        files = File.query.filter_by(user_id=user.id)
-        file_list = {file.filename: {'last_modified': file.last_modified, 'url': generate_url(BUCKET, f"documents/{user.pfp_id}{file.filename}")}
-                     for file in files}
-
     return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
+
+
+@bp.route('/document/<user_id>/<filename>', methods=['GET', 'POST'])
+@login_required
+def document(user_id, filename):
+    user = User.query.filter_by(id=user_id).first_or_404()
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/document.html',
+                           file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")), pfp_url=pfp_url)
 
 
 @bp.before_request
