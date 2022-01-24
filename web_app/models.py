@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
     pfp_id = db.Column(db.String(50), unique=True)
     files = db.relationship('File', lazy=True, backref='User_Info')
+    settings = db.relationship('Settings', lazy=True, backref='User_Info')
 
     def __init__(self, first_name, last_name, email, username, password=None, google_id=None):
         self.first_name = first_name
@@ -44,4 +45,11 @@ class File(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
 
+
+class Settings(db.Model):
+    __tablename__ = 'Settings'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
 
