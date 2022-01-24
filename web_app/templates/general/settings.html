@@ -9,28 +9,42 @@
                         <div class="card-body">
                             <h2 class="card-title" style="margin: 25px 0 25px 18px">User Settings</h2>
                             <hr>
-                            <div class="accordion accordion-flush" id="accordionFlushExample">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="flush-headingOne">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                            <h4>Account Type</h4>
-                                        </button>
-                                    </h2>
-                                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                        <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
+                            <form class="row g-3" method="post" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="flush-headingOne">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                                <h4>Account Type</h4>
+                                            </button>
+                                        </h2>
+                                        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                            <div class="form-check form-switch my-4">
+                                                {{ form.seller_account(class="form-check-input", type="checkbox", role="switch") }}
+                                                {{ form.seller_account.label(class="form-check-label") }}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="flush-headingTwo">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                            <h4>Profile Visibility</h4>
-                                        </button>
-                                    </h2>
-                                    <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                        <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion body. Let's imagine this being filled with some actual content.</div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="flush-headingTwo">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                                <h4>Profile Visibility</h4>
+                                            </button>
+                                        </h2>
+                                        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                            <div class="form-check form-switch mt-4 mb-2">
+                                                {{ form.show_profile_views(class="form-check-input", type="checkbox", role="switch") }}
+                                                {{ form.show_profile_views.label(class="form-check-label") }}
+                                            </div>
+                                            <div class="form-check form-switch mt-2 mb-4">
+                                                {{ form.show_last_seen(class="form-check-input", type="checkbox", role="switch") }}
+                                                {{ form.show_last_seen.label(class="form-check-label") }}
+                                            </div>
+                                        </div>
                                     </div>
+                                    {{ form.save(class="btn btn-primary", style="margin: 25px 0 25px 18px") }}
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

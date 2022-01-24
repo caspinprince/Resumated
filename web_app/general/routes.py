@@ -3,8 +3,8 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User, File
-from web_app.general.forms import EditProfileForm, UploadDocForm
+from web_app.models import User, File, Settings
+from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
 from web_app.general import bp
@@ -105,10 +105,35 @@ def document(user_id, filename):
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    form = SettingsForm(request.form)
     user = User.query.filter_by(id=current_user.id).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
-    return render_template('general/settings.html', pfp_url=pfp_url)
+
+    if form.validate_on_submit():
+        for setting in form:
+            if setting.name == 'save' or setting.name == 'csrf_token':
+                continue
+            query = Settings.query.filter_by(user_id=user.id, key=setting.name).first()
+            if query is None:
+                db.session.add(Settings(key=setting.name, value=setting.data, user_id=user.id))
+            else:
+                query.value = setting.data
+
+        db.session.commit()
+        return redirect(url_for('general.user', username=user.username, pfp_url=pfp_url))
+
+    elif request.method == 'GET':
+        seller_account = Settings.query.filter_by(user_id=current_user.id, key='seller_account').first()
+        show_profile_views = Settings.query.filter_by(user_id=current_user.id, key='show_profile_views').first()
+        show_last_seen = Settings.query.filter_by(user_id=current_user.id, key='show_last_seen').first()
+        data_map = {'0': False, '1': True}
+
+        form.seller_account.data = data_map[seller_account.value] if seller_account is not None else False
+        form.show_profile_views.data = data_map[show_profile_views.value] if show_profile_views is not None else True
+        form.show_last_seen.data = data_map[show_last_seen.value] if show_last_seen is not None else True
+
+    return render_template('general/settings.html', pfp_url=pfp_url, form=form)
 
 
 @bp.before_request

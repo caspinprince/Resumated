@@ -27,5 +27,11 @@ class UploadDocForm(FlaskForm):
     document = FileField(label='Upload a document! (PDF only)', validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Submit')
 
+class SettingsForm(FlaskForm):
+    seller_account = BooleanField('Activate seller account functionalities', false_values=(False, 'false', 'False', '0', 0))
+    show_profile_views = BooleanField('Show view count on profile page', false_values=(False, 'false', 'False', '0', 0))
+    show_last_seen = BooleanField('Show activity status on profile page', false_values=(False, 'false', 'False', '0', 0))
+    save = SubmitField('Save')
+
 
 
