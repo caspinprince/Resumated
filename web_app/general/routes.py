@@ -32,8 +32,14 @@ def user(username):
     form = EditProfileForm(request.form)
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
+
+    user_pfp_file = f"images/{user.pfp_id}.jpg"
+    user_pfp_url = generate_url(BUCKET, user_pfp_file)
+
+    show_profile_views = Settings.query.filter_by(user_id=user.id, key='show_profile_views').first()
+    show_last_seen = Settings.query.filter_by(user_id=user.id, key='show_last_seen').first()
 
     if form.validate_on_submit():
         try:
@@ -49,7 +55,7 @@ def user(username):
         user.headline = form.headline.data
         user.about_me = form.about_me.data
         db.session.commit()
-        return redirect(url_for('general.user', username=user.username, pfp_url=pfp_url))
+        return redirect(url_for('general.user', username=user.username))
     elif request.method == 'GET':
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
@@ -57,7 +63,8 @@ def user(username):
         form.headline.data = user.headline
         form.about_me.data = user.about_me
 
-    return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url)
+    return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url,
+                           show_profile_views=show_profile_views, show_last_seen=show_last_seen, user_pfp_url=user_pfp_url)
 
 
 @bp.route('/user_files/<username>', methods=['GET', 'POST'])
