@@ -6,6 +6,7 @@ from flask_dance.consumer import oauth_authorized
 from web_app import db
 from web_app.models import User
 from flask import redirect, url_for
+from web_app.utilities import init_settings
 
 blueprint = make_google_blueprint(client_id=os.environ.get("GOOGLE_OAUTH_CLIENT_ID"),
                                   client_secret=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET"),
@@ -33,6 +34,7 @@ def google_logged_in(blueprint, token):
                         username=username)
             db.session.add(user)
             db.session.commit()
+            init_settings(user.id)
         else:
             User.query.filter_by(email=email).first().google_id = google_id
             db.session.commit()
