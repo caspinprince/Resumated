@@ -19,7 +19,7 @@
                         <div class="text-white d-flex flex-row" style="border-radius: 10px 10px 0px 0px; background-color: #212529; height:200px;">
                             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
                                 <div class="pfp mb-2 mt-4" style="z-index: 1">
-                                    <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
+                                    <img src={{ user_pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
                                          class="pfp img-fluid img-thumbnail" style="z-index: -1">
                                 </div>
 
@@ -81,18 +81,18 @@
                         </div>
                         <div class="p-4 text-black" style="background-color: #f8f9fa;">
                             <div class="d-flex justify-content-end text-center py-1">
-                                <div>
-                                    <p class="mb-1 h5">253</p>
-                                    <p class="small text-muted mb-0">Profile Views</p>
-                                </div>
-                                <div class="px-3">
-                                    <p class="mb-1 h5">{{ last_seen }}</p>
-                                    <p class="small text-muted mb-0">Last Seen</p>
-                                </div>
-                                <div>
-                                    <p class="mb-1 h5">4.9/5</p>
-                                    <p class="small text-muted mb-0">Rating</p>
-                                </div>
+                                {% if show_profile_views.value == '1' %}
+                                    <div>
+                                        <p class="mb-1 h5">253</p>
+                                        <p class="small text-muted mb-0">Profile Views</p>
+                                    </div>
+                                {% endif %}
+                                {% if show_last_seen.value == '1' %}
+                                    <div class="px-3">
+                                        <p class="mb-1 h5">{{ last_seen }}</p>
+                                        <p class="small text-muted mb-0">Last Seen</p>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="card-body p-4 text-black">

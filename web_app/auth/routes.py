@@ -4,6 +4,7 @@ from web_app.models import User
 from web_app import db
 from web_app.auth.forms import LoginForm, RegistrationForm
 from web_app.auth import bp
+from web_app.utilities import init_settings
 
 @bp.route('/logout')
 @login_required
@@ -48,6 +49,8 @@ def signup():
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
+
+        init_settings(user.id)
         flash("Thanks for signing up!")
         return redirect(url_for('auth.login'))
 

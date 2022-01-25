@@ -5,9 +5,27 @@
             Documents
         </h2>
         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                style="z-index: 1;" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+                data-bs-toggle="modal" data-bs-target="#uploadDocModal">
             Upload
         </button>
+    </div>
+    <div class="container">
+        <table id="fileTable" class="table table-bordered">
+            <thead>
+            <tr>
+                <th class="th-sm" scope="col">Name</th>
+                <th class="th-sm" scope="col">Last Modified</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in file_list %}
+                <tr>
+                    <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = current_user.id, filename=file) }}>{{ file }}</a></th>
+                    <td>{{ file_list[file] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-labelledby="uploadDocLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -36,24 +54,6 @@
                 </form>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <table id="fileTable" class="table table-bordered">
-            <thead>
-            <tr>
-                <th class="th-sm" scope="col">Name</th>
-                <th class="th-sm" scope="col">Last Modified</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for file in file_list %}
-                <tr>
-                    <th scope="row"><a href={{ url_for('general.document', user_id = current_user.id, filename=file) }}>{{ file }}</a></th>
-                    <td>{{ file_list[file] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
     </div>
 
 {% endblock %}
