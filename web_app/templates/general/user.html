@@ -76,7 +76,11 @@
                             </div>
                             <div class="ms-3" style="margin-top: 130px;">
                                 <h3>{{ user.first_name }} {{ user.last_name }}</h3>
-                                <p>{{ user.headline }}</p>
+                                {% if seller_account.value == '1' %}
+                                    <p>{{ user.headline }} • <span style="height: 1.5em" class="badge bg-warning text-dark">Reviewer</span></p>
+                                {% else %}
+                                    <p>{{ user.headline }}</p>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="p-4 text-black" style="background-color: #f8f9fa;">

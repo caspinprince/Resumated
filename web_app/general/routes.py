@@ -18,7 +18,9 @@ BUCKET = "rezume-files"
 @bp.route('/')
 def home():
     if current_user.is_authenticated:
-        users = User.query.all()
+        users = db.session.query(User.id, User.username, User.pfp_id, User.first_name, User.last_name, User.about_me,
+                                 User.headline, Settings.value, Settings.key).join(User.settings)\
+            .filter(Settings.key == 'seller_account')
         pfp_links = {user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg") for user in users}
         pfp_url = pfp_links[current_user.username]
         return render_template('general/user_home.html', users=users, pfp_links=pfp_links, pfp_url=pfp_url)
@@ -38,6 +40,7 @@ def user(username):
     user_pfp_file = f"images/{user.pfp_id}.jpg"
     user_pfp_url = generate_url(BUCKET, user_pfp_file)
 
+    seller_account = Settings.query.filter_by(user_id=user.id, key='seller_account').first()
     show_profile_views = Settings.query.filter_by(user_id=user.id, key='show_profile_views').first()
     show_last_seen = Settings.query.filter_by(user_id=user.id, key='show_last_seen').first()
 
@@ -64,7 +67,8 @@ def user(username):
         form.about_me.data = user.about_me
 
     return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url,
-                           show_profile_views=show_profile_views, show_last_seen=show_last_seen, user_pfp_url=user_pfp_url)
+                           show_profile_views=show_profile_views, show_last_seen=show_last_seen, user_pfp_url=user_pfp_url,
+                           seller_account=seller_account)
 
 
 @bp.route('/user_files/<username>', methods=['GET', 'POST'])
