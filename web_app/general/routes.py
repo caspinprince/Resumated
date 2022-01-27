@@ -3,7 +3,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User, File, Settings
+from web_app.models import User, File, Settings, FileAssociation
 from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
@@ -15,11 +15,12 @@ import urllib.parse
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
 
+
 @bp.route('/')
 def home():
     if current_user.is_authenticated:
         users = db.session.query(User.id, User.username, User.pfp_id, User.first_name, User.last_name, User.about_me,
-                                 User.headline, Settings.value, Settings.key).join(User.settings)\
+                                 User.headline, Settings.value, Settings.key).join(User.settings) \
             .filter(Settings.key == 'seller_account')
         pfp_links = {user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg") for user in users}
         pfp_url = pfp_links[current_user.username]
@@ -67,7 +68,8 @@ def user(username):
         form.about_me.data = user.about_me
 
     return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url,
-                           show_profile_views=show_profile_views, show_last_seen=show_last_seen, user_pfp_url=user_pfp_url,
+                           show_profile_views=show_profile_views, show_last_seen=show_last_seen,
+                           user_pfp_url=user_pfp_url,
                            seller_account=seller_account)
 
 
@@ -81,8 +83,9 @@ def user_files(username):
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
-    files = File.query.filter_by(user_id=user.id)
-    file_list = {file.filename: file.last_modified for file in files}
+    file_assoc = FileAssociation.query.filter_by(user_id=user.id)
+    file_list = [{'filename': file.file.filename, 'last_modified': file.file.last_modified,
+                  'owner': 'me' if file.user_status == 'owner' else file.user.username} for file in file_assoc]
 
     if form.validate_on_submit():
         try:
@@ -90,15 +93,17 @@ def user_files(username):
             filename = doc.filename
             content_type = request.mimetype
             upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type)
-            check = File.query.filter_by(filename=filename, user_id=user.id).first()
+            check = File.query.filter_by(filename=filename).first()
             if check is not None:
                 check.last_modified = datetime.utcnow()
             else:
-                file = File(filename=filename, user_id=user.id)
-                db.session.add(file)
+                assoc = FileAssociation(user_status="owner", file_status="active")
+                assoc.file = File(filename=filename)
+                current_user.files.append(assoc)
+                db.session.add(current_user)
             db.session.commit()
-        except:
-            pass
+        except Exception as e:
+            print(e)
         return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
 
     return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
@@ -111,7 +116,9 @@ def document(user_id, filename):
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
     return render_template('general/document.html',
-                           file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")), pfp_url=pfp_url)
+                           file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
+                           pfp_url=pfp_url)
+
 
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -153,4 +160,3 @@ def before_request():
         user = User.query.filter_by(username=current_user.username).first_or_404()
         user.last_online = datetime.utcnow()
         db.session.commit()
-

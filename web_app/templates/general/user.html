@@ -71,6 +71,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                {% elif seller_account.value == '1' %}
+                                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
+                                            style="z-index: 1;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                        Request a review
+                                    </button>
                                 {% endif %}
 
                             </div>

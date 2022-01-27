@@ -14,14 +14,16 @@
             <thead>
             <tr>
                 <th class="th-sm" scope="col">Name</th>
+                <th class="th-sm" scope="col">Owner</th>
                 <th class="th-sm" scope="col">Last Modified</th>
             </tr>
             </thead>
             <tbody>
             {% for file in file_list %}
                 <tr>
-                    <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = current_user.id, filename=file) }}>{{ file }}</a></th>
-                    <td>{{ file_list[file] }}</td>
+                    <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = current_user.id, filename=file['filename']) }}>{{ file['filename'] }}</a></th>
+                    <td>{{ file['owner'] }}</td>
+                    <td>{{ file['last_modified'] }}</td>
                 </tr>
             {% endfor %}
             </tbody>
