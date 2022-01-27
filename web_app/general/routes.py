@@ -4,9 +4,9 @@ from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
 from web_app.models import User, File, Settings, FileAssociation
-from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm
+from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm
 from datetime import datetime, timedelta
-from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url
+from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url, get_user_files
 from web_app.general import bp
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
@@ -32,7 +32,9 @@ def home():
 @bp.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
-    form = EditProfileForm(request.form)
+    profile_form = EditProfileForm(request.form)
+    review_form = RequestReviewForm(request.form)
+    review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id)]
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
     pfp_file = f"images/{current_user.pfp_id}.jpg"
@@ -45,7 +47,7 @@ def user(username):
     show_profile_views = Settings.query.filter_by(user_id=user.id, key='show_profile_views').first()
     show_last_seen = Settings.query.filter_by(user_id=user.id, key='show_last_seen').first()
 
-    if form.validate_on_submit():
+    if profile_form.validate_on_submit():
         try:
             img = request.files['profile_pic']
             content_type = request.mimetype
@@ -53,21 +55,22 @@ def user(username):
         except:
             pass
 
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
-        user.username = form.username.data
-        user.headline = form.headline.data
-        user.about_me = form.about_me.data
+        user.first_name = profile_form.first_name.data
+        user.last_name = profile_form.last_name.data
+        user.username = profile_form.username.data
+        user.headline = profile_form.headline.data
+        user.about_me = profile_form.about_me.data
         db.session.commit()
         return redirect(url_for('general.user', username=user.username))
     elif request.method == 'GET':
-        form.first_name.data = user.first_name
-        form.last_name.data = user.last_name
-        form.username.data = user.username
-        form.headline.data = user.headline
-        form.about_me.data = user.about_me
+        profile_form.first_name.data = user.first_name
+        profile_form.last_name.data = user.last_name
+        profile_form.username.data = user.username
+        profile_form.headline.data = user.headline
+        profile_form.about_me.data = user.about_me
 
-    return render_template('general/user.html', user=user, form=form, last_seen=last_seen, pfp_url=pfp_url,
+    return render_template('general/user.html', user=user, profile_form=profile_form, review_form=review_form,
+                           last_seen=last_seen, pfp_url=pfp_url,
                            show_profile_views=show_profile_views, show_last_seen=show_last_seen,
                            user_pfp_url=user_pfp_url,
                            seller_account=seller_account)
@@ -83,9 +86,7 @@ def user_files(username):
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
-    file_assoc = FileAssociation.query.filter_by(user_id=user.id)
-    file_list = [{'filename': file.file.filename, 'last_modified': file.file.last_modified,
-                  'owner': 'me' if file.user_status == 'owner' else file.user.username} for file in file_assoc]
+    file_list = get_user_files(user.id)
 
     if form.validate_on_submit():
         try:
@@ -93,12 +94,12 @@ def user_files(username):
             filename = doc.filename
             content_type = request.mimetype
             upload_doc_to_s3(doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type)
-            check = File.query.filter_by(filename=filename).first()
+            check = File.query.filter_by(filename=filename, user_id=user.id).first()
             if check is not None:
                 check.last_modified = datetime.utcnow()
             else:
                 assoc = FileAssociation(user_status="owner", file_status="active")
-                assoc.file = File(filename=filename)
+                assoc.file = File(filename=filename, user_id=user.id)
                 current_user.files.append(assoc)
                 db.session.add(current_user)
             db.session.commit()

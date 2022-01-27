@@ -54,6 +54,7 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, nullable=False)
     users = db.relationship(FileAssociation, back_populates='file')
 
 
