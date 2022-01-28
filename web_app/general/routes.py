@@ -33,8 +33,10 @@ def home():
 @login_required
 def user(username):
     profile_form = EditProfileForm(request.form)
+
     review_form = RequestReviewForm(request.form)
     review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id)]
+
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
     pfp_file = f"images/{current_user.pfp_id}.jpg"
@@ -47,27 +49,34 @@ def user(username):
     show_profile_views = Settings.query.filter_by(user_id=user.id, key='show_profile_views').first()
     show_last_seen = Settings.query.filter_by(user_id=user.id, key='show_last_seen').first()
 
-    if profile_form.validate_on_submit():
-        try:
-            img = request.files['profile_pic']
-            content_type = request.mimetype
-            upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
-        except:
-            pass
+    if current_user.username == username:
+        if profile_form.validate_on_submit():
+            try:
+                img = request.files['profile_pic']
+                content_type = request.mimetype
+                upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+            except:
+                pass
 
-        user.first_name = profile_form.first_name.data
-        user.last_name = profile_form.last_name.data
-        user.username = profile_form.username.data
-        user.headline = profile_form.headline.data
-        user.about_me = profile_form.about_me.data
-        db.session.commit()
-        return redirect(url_for('general.user', username=user.username))
-    elif request.method == 'GET':
-        profile_form.first_name.data = user.first_name
-        profile_form.last_name.data = user.last_name
-        profile_form.username.data = user.username
-        profile_form.headline.data = user.headline
-        profile_form.about_me.data = user.about_me
+            user.first_name = profile_form.first_name.data
+            user.last_name = profile_form.last_name.data
+            user.username = profile_form.username.data
+            user.headline = profile_form.headline.data
+            user.about_me = profile_form.about_me.data
+            db.session.commit()
+            return redirect(url_for('general.user', username=user.username))
+        elif request.method == 'GET':
+            profile_form.first_name.data = user.first_name
+            profile_form.last_name.data = user.last_name
+            profile_form.username.data = user.username
+            profile_form.headline.data = user.headline
+            profile_form.about_me.data = user.about_me
+    else:
+        if review_form.validate_on_submit():
+            file_id = review_form.document.data
+            assoc = FileAssociation(user_status="shared", file_status="active", user_id=user.id, file_id=file_id)
+            db.session.add(assoc)
+            db.session.commit()
 
     return render_template('general/user.html', user=user, profile_form=profile_form, review_form=review_form,
                            last_seen=last_seen, pfp_url=pfp_url,
