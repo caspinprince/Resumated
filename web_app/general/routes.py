@@ -75,7 +75,9 @@ def user(username):
         if review_form.validate_on_submit():
             file_id = review_form.document.data
             assoc = FileAssociation(user_status="shared", file_status="active", user_id=user.id, file_id=file_id)
-            db.session.add(assoc)
+            assoc.file = File.query.filter_by(id=file_id).first()
+            user.files.append(assoc)
+            db.session.add(user)
             db.session.commit()
 
     return render_template('general/user.html', user=user, profile_form=profile_form, review_form=review_form,
