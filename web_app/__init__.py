@@ -10,7 +10,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
-
+from web_app import models
 
 def create_app(config_class=Config):
     app = Flask(__name__)

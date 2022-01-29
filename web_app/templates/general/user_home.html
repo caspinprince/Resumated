@@ -5,6 +5,9 @@
             {% for user in users %}
                 <div class="col-md-3 mb-5 mb-md-0" style="padding:20px;">
                     <div class="card testimonial-card" style="border-radius: 10px;">
+                        {% if user.value == '1' %}
+                            <span style="height: 20px; margin-bottom: -20px; border-radius: 10px 10px 0px 0px; z-index: 2" class="badge bg-warning text-dark">Reviewer</span>
+                        {% endif %}
                         <div class="card-up" style="background-color: #484e53; border-radius:10px 10px 0px 0px;"></div>
                         <div class="avatar mx-auto bg-white">
                             <a href={{ url_for('general.user', username=user.username) }}>

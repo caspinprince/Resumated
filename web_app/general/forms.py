@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from flask import render_template, redirect, url_for
 from flask_login import current_user
 from flask_wtf.file import FileAllowed, FileSize, FileRequired
-
+from web_app.utilities import get_user_files
 from web_app.models import User
 
 
@@ -33,6 +33,12 @@ class SettingsForm(FlaskForm):
     show_profile_views = BooleanField('Show view count on profile page', false_values=(False, 'false', 'False', '0', 0))
     show_last_seen = BooleanField('Show activity status on profile page', false_values=(False, 'false', 'False', '0', 0))
     save = SubmitField('Save')
+
+
+class RequestReviewForm(FlaskForm):
+    document = SelectField('Select a Document')
+    requests = TextAreaField('Special Requests', validators=[Length(min=0, max=1000)])
+    submit = SubmitField('Submit')
 
 
 

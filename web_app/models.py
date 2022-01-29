@@ -8,6 +8,17 @@ import uuid
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+class FileAssociation(db.Model):
+    __tablename__ = 'FileAssociation'
+    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), primary_key=True)
+    file_id = db.Column(db.Integer, db.ForeignKey('File.id'), primary_key=True)
+    user_status = db.Column(db.String(50), nullable=False)
+    file_status = db.Column(db.String(25), nullable=False)
+    user = db.relationship("User", back_populates="files")
+    file = db.relationship("File", back_populates="users")
+
+
 class User(db.Model, UserMixin):
     __tablename__='User_Info'
 
@@ -22,8 +33,8 @@ class User(db.Model, UserMixin):
     headline = db.Column(db.String(250), default="")
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
     pfp_id = db.Column(db.String(50), unique=True)
-    files = db.relationship('File', lazy=True, backref='User_Info')
-    settings = db.relationship('Settings', lazy=True, backref='User_Info')
+    files = db.relationship(FileAssociation, back_populates='user')
+    settings = db.relationship('Settings', lazy=True, backref='users')
 
     def __init__(self, first_name, last_name, email, username, password=None, google_id=None):
         self.first_name = first_name
@@ -42,8 +53,9 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, nullable=False)
+    users = db.relationship(FileAssociation, back_populates='file', cascade="all, delete-orphan")
 
 
 class Settings(db.Model):
@@ -52,4 +64,7 @@ class Settings(db.Model):
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
+
+
+
 
