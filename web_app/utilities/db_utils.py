@@ -9,8 +9,14 @@ def init_settings(user_id):
 
     db.session.commit()
 
-def get_user_files(user_id):
-    file_assoc = FileAssociation.query.filter_by(user_id=user_id)
+def get_user_files(user_id, filter):
+    if filter == 'my-files':
+        file_assoc = FileAssociation.query.filter_by(user_id=user_id, user_status='owner', file_status='active')
+    elif filter == 'shared':
+        file_assoc = FileAssociation.query.filter_by(user_id=user_id, user_status='shared', file_status='active')
+    elif filter == 'archive':
+        file_assoc = FileAssociation.query.filter_by(user_id=user_id, user_status='owner', file_status='archived')
+
     file_list = [{'filename': file.file.filename, 'last_modified': file.file.last_modified,
                   'owner': 'me' if file.user_status == 'owner' else User.query.filter_by(id=file.file.user_id).first().username,
                   'file_id': file.file_id} for file in file_assoc]

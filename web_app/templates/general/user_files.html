@@ -8,9 +8,12 @@
                 data-bs-toggle="modal" data-bs-target="#uploadDocModal">
             Upload
         </button>
+        <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }}>My Files</a>
+        <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }}>Shared Files</a>
+        <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }}>Archived Files</a>
     </div>
     <div class="container">
-        <table id="fileTable" class="table table-bordered">
+        <table id="fileTable" class="table table-sm table-hover">
             <thead>
             <tr>
                 <th class="th-sm" scope="col">Name</th>
@@ -22,8 +25,14 @@
             {% for file in file_list %}
                 <tr>
                     <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = current_user.id, filename=file['filename']) }}>{{ file['filename'] }}</a></th>
-                    <td>{{ file['owner'] }}</td>
-                    <td>{{ file['last_modified'] }}</td>
+                    <td class="align-middle">{{ file['owner'] }}</td>
+                    <td class="align-middle">{{ file['last_modified'] }}</td>
+                    <form method="post" action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="arch") }}">
+                        <td class="align-middle"><input class="btn" type="submit" name="archive" value="Archive"></td>
+                    </form>
+                    <form method="post" action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="del") }}">
+                        <td class="align-middle"><input class="btn" type="submit" name="delete" value="Delete"></td>
+                    </form>
                 </tr>
             {% endfor %}
             </tbody>

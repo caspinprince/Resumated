@@ -87,9 +87,9 @@ def user(username):
                            seller_account=seller_account)
 
 
-@bp.route('/user_files/<username>', methods=['GET', 'POST'])
+@bp.route('/user_files/<username>/<filter>', methods=['GET', 'POST'])
 @login_required
-def user_files(username):
+def user_files(username, filter):
     if current_user.username != username:
         return redirect(url_for('general.home'))
 
@@ -97,7 +97,7 @@ def user_files(username):
     user = User.query.filter_by(username=username).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
-    file_list = get_user_files(user.id)
+    file_list = get_user_files(user.id, filter)
 
     if form.validate_on_submit():
         try:
@@ -116,7 +116,7 @@ def user_files(username):
             db.session.commit()
         except Exception as e:
             print(e)
-        return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
+        return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url, filter='my-files'))
 
     return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
 
@@ -164,6 +164,22 @@ def settings():
         form.show_last_seen.data = data_map[show_last_seen.value] if show_last_seen is not None else True
 
     return render_template('general/settings.html', pfp_url=pfp_url, form=form)
+
+
+@bp.route('/delete/<int:file_id>/<delete_or_archive>', methods=['POST'])
+@login_required
+def delete(file_id, delete_or_archive):
+    user = User.query.filter_by(id=current_user.id).first_or_404()
+    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+
+    if delete_or_archive == 'del':
+        file = File.query.filter_by(id=file_id).first()
+        db.session.delete(file)
+    else:
+        FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
+    db.session.commit()
+    return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
 
 
 @bp.before_request
