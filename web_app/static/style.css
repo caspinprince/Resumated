@@ -91,7 +91,7 @@
     font-size: 20px;
     line-height: 1.7;
     color: white;
-    margin-top: 25px;
+    margin-top: 45px;
 }
 
 .home-section-wrapper {
@@ -103,10 +103,10 @@
 }
 
 .about-section-wrapper {
-    height: 120vh;
     width: 100%;
     background-color: white;
     text-align: center;
+    padding-top: 100px;
 }
 
 .start-btn {
@@ -114,11 +114,11 @@
     padding: 15px 40px;
     background-color: white;
     color: #090e34;
-    margin-top: 35px;
+    margin-top: 45px;
 }
 
 .home-image-container {
-    margin-top: 70px;
+    margin-top: 60px;
     align-content: center;
     width: 65%;
     margin-left: auto;
@@ -133,3 +133,32 @@
     border-top-left-radius: 0.7rem;
 }
 
+.section-pre-header {
+    color: #224e7f;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.section-header {
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.section-sub-header {
+    margin: 20px auto;
+    font-weight: 400;
+    font-size: 18px;
+    color: gray;
+    max-width: 600px;
+}
+
+.feature-card {
+    margin: 0px 10px;
+}
+
+.feature-card-title {
+    font-weight: 700;
+    font-size: 24px;
+    padding-top: 25px;
+    padding-bottom: 10px;
+}
