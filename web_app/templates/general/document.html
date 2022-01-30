@@ -7,9 +7,14 @@
                 <iframe src="https://docs.google.com/viewer?url={{ file_url }}&embedded=true"></iframe>
             </div>
             <div class="col">
-                <div class="container">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aut autem commodi, corporis cumque cupiditate esse, facilis iusto magnam magni nesciunt odit quam quibusdam quisquam recusandae sed, sit ullam vero.
-                </div>
+                <form class="row g-3" method="post" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="col-12" style="height: 90vh">
+                        {{ form.review.label(class="fs-3 mt-3 mb-3", style="color: black;") }}
+                        {{ form.review(class="form-control", style="height: 90%") }}
+                        {{ form.submit(class="btn btn-primary mt-3 mb-3", style="width:100%") }}
+                    </div>
+                </form>
             </div>
         </div>
     </div>

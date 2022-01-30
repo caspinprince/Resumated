@@ -4,7 +4,7 @@ from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
 from web_app.models import User, File, Settings, FileAssociation
-from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm
+from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm, ReviewForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url, get_user_files
 from web_app.general import bp
@@ -35,7 +35,7 @@ def user(username):
     profile_form = EditProfileForm(request.form)
 
     review_form = RequestReviewForm(request.form)
-    review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id)]
+    review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id, "my-files")]
 
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
@@ -124,12 +124,13 @@ def user_files(username, filter):
 @bp.route('/document/<user_id>/<filename>', methods=['GET', 'POST'])
 @login_required
 def document(user_id, filename):
+    form = ReviewForm(request.form)
     user = User.query.filter_by(id=user_id).first_or_404()
     pfp_file = f"images/{user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
-                           pfp_url=pfp_url)
+                           pfp_url=pfp_url, form=form)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])
