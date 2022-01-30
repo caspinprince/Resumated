@@ -3,8 +3,8 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User, File, Settings, FileAssociation
-from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm
+from web_app.models import User, File, Settings, FileAssociation, Feedback
+from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm, ReviewForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url, get_user_files
 from web_app.general import bp
@@ -35,7 +35,7 @@ def user(username):
     profile_form = EditProfileForm(request.form)
 
     review_form = RequestReviewForm(request.form)
-    review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id)]
+    review_form.document.choices = [(x['file_id'], x['filename']) for x in get_user_files(current_user.id, "my-files")]
 
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
@@ -124,20 +124,39 @@ def user_files(username, filter):
 @bp.route('/document/<user_id>/<filename>', methods=['GET', 'POST'])
 @login_required
 def document(user_id, filename):
-    user = User.query.filter_by(id=user_id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    form = ReviewForm(request.form)
+    user = User.query.filter_by(id=user_id).first()
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
+
+    owner = int(user_id) == current_user.id
+    file = File.query.filter_by(filename=filename, user_id=user_id).first()
+
+    if form.validate_on_submit():
+        db.session.add(Feedback(file_id=file.id, feedback=form.review.data, user_id=current_user.id))
+        FileAssociation.query.filter_by(file_id=file.id, user_id=current_user.id).delete()
+        db.session.commit()
+        return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
+
+    feedback = Feedback.query.filter_by(file_id=file.id)
+    feedback_data = []
+    for comment in feedback:
+        data = {}
+        person = User.query.filter_by(id=comment.user_id).first()
+        data['name'] = f'{person.first_name} {person.last_name} ({person.username})'
+        data['feedback'] = comment.feedback
+        feedback_data.append(data)
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
-                           pfp_url=pfp_url)
+                           pfp_url=pfp_url, form=form, owner=owner, feedback_data=feedback_data)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
     form = SettingsForm(request.form)
-    user = User.query.filter_by(id=current_user.id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    user = User.query.filter_by(id=current_user.id).first()
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
     if form.validate_on_submit():
@@ -169,17 +188,17 @@ def settings():
 @bp.route('/delete/<int:file_id>/<delete_or_archive>', methods=['POST'])
 @login_required
 def delete(file_id, delete_or_archive):
-    user = User.query.filter_by(id=current_user.id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
-    if delete_or_archive == 'del':
-        file = File.query.filter_by(id=file_id).first()
-        db.session.delete(file)
-    else:
-        FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
-    db.session.commit()
-    return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
+    if current_user.id == File.query.filter_by(id=file_id).first().user_id:
+        if delete_or_archive == 'del':
+            file = File.query.filter_by(id=file_id).first()
+            db.session.delete(file)
+        else:
+            FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
+        db.session.commit()
+    return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
 
 
 @bp.before_request

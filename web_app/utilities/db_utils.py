@@ -19,5 +19,5 @@ def get_user_files(user_id, filter):
 
     file_list = [{'filename': file.file.filename, 'last_modified': file.file.last_modified,
                   'owner': 'me' if file.user_status == 'owner' else User.query.filter_by(id=file.file.user_id).first().username,
-                  'file_id': file.file_id} for file in file_assoc]
+                  'file_id': file.file_id, 'owner_id': User.query.filter_by(id=file.file.user_id).first().id} for file in file_assoc]
     return file_list

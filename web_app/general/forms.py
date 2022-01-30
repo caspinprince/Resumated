@@ -41,4 +41,8 @@ class RequestReviewForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+class ReviewForm(FlaskForm):
+    review = TextAreaField('Comments', validators=[DataRequired(), Length(min=0, max=1000)])
+    submit = SubmitField('Submit')
+
 
