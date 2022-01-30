@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-    <div class="jumbotron">
-        {% if current_user.is_authenticated %}
-        <h1>Welcome to Rezume!</h1>
-        {% else %}
-        <h1>Welcome to Rezume {{ current_user.username }}</h1>
-        {% endif %}
-        <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur corporis cum deleniti eius enim, est eum
-            fugit illo molestiae nam neque numquam quod, repellat reprehenderit sequi sint tenetur ullam voluptas.</p>
+    <div class="home-section-wrapper">
+        <div class="home-title">Document Reviewing Platform</div>
+        <br>
+        <div class="home-title">for Resumes, Applications, and More</div>
+        <div class="home-subtitle">Get personalized feedback from professionals in your industry.</div>
+        <a href={{ url_for('auth.signup') }} class="btn start-btn btn-lg">Get Started</a>
+        <div class="home-image-container">
+            <img class="home-image img-fluid" src="static/home-example.png">
+        </div>
     </div>
-</div>
+    <div class="about-section-wrapper">
+
+    </div>
 
 {% endblock %}
