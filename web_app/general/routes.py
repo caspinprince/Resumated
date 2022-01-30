@@ -129,14 +129,26 @@ def document(user_id, filename):
     pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
+    owner = int(user_id) == current_user.id
+    file = File.query.filter_by(filename=filename, user_id=user_id).first()
+
     if form.validate_on_submit():
-        file = File.query.filter_by(filename=filename, user_id=user_id).first()
-        db.session.add(Feedback(file_id=file.id, feedback=form.review.data))
+        db.session.add(Feedback(file_id=file.id, feedback=form.review.data, user_id=current_user.id))
+        FileAssociation.query.filter_by(file_id=file.id, user_id=current_user.id).delete()
         db.session.commit()
         return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
+
+    feedback = Feedback.query.filter_by(file_id=file.id)
+    feedback_data = []
+    for comment in feedback:
+        data = {}
+        person = User.query.filter_by(id=comment.user_id).first()
+        data['name'] = f'{person.first_name} {person.last_name} ({person.username})'
+        data['feedback'] = comment.feedback
+        feedback_data.append(data)
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
-                           pfp_url=pfp_url, form=form)
+                           pfp_url=pfp_url, form=form, owner=owner, feedback_data=feedback_data)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])

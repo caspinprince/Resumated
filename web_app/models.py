@@ -54,7 +54,7 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), nullable=False)
     users = db.relationship(FileAssociation, back_populates='file', cascade="all, delete-orphan")
     feedback = db.relationship('Feedback', lazy=True, backref='file', cascade="all, delete-orphan")
 
@@ -71,6 +71,7 @@ class Feedback(db.Model):
     __tablename__ = 'Feedback'
     id = db.Column(db.Integer, primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey('File.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User_Info.id'), primary_key=True)
     feedback = db.Column(db.String(10000), nullable=False)
 
 
