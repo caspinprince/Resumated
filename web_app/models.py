@@ -56,7 +56,7 @@ class File(db.Model):
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, nullable=False)
     users = db.relationship(FileAssociation, back_populates='file', cascade="all, delete-orphan")
-    feedback = db.relationship('Feedback', lazy=True, backref='file')
+    feedback = db.relationship('Feedback', lazy=True, backref='file', cascade="all, delete-orphan")
 
 
 class Settings(db.Model):

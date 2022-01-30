@@ -179,13 +179,13 @@ def delete(file_id, delete_or_archive):
     pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
-
-    if delete_or_archive == 'del':
-        file = File.query.filter_by(id=file_id).first()
-        db.session.delete(file)
-    else:
-        FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
-    db.session.commit()
+    if current_user.id == File.query.filter_by(id=file_id).first().user_id:
+        if delete_or_archive == 'del':
+            file = File.query.filter_by(id=file_id).first()
+            db.session.delete(file)
+        else:
+            FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
+        db.session.commit()
     return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
 
 
