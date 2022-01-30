@@ -3,7 +3,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from web_app import db
 from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import current_user, login_required
-from web_app.models import User, File, Settings, FileAssociation
+from web_app.models import User, File, Settings, FileAssociation, Feedback
 from web_app.general.forms import EditProfileForm, UploadDocForm, SettingsForm, RequestReviewForm, ReviewForm
 from datetime import datetime, timedelta
 from web_app.utilities import time_diff, upload_pfp_to_s3, upload_doc_to_s3, generate_url, get_user_files
@@ -125,9 +125,15 @@ def user_files(username, filter):
 @login_required
 def document(user_id, filename):
     form = ReviewForm(request.form)
-    user = User.query.filter_by(id=user_id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    user = User.query.filter_by(id=user_id).first()
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
+
+    if form.validate_on_submit():
+        file = File.query.filter_by(filename=filename, user_id=user_id).first()
+        db.session.add(Feedback(file_id=file.id, feedback=form.review.data))
+        db.session.commit()
+        return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
                            pfp_url=pfp_url, form=form)
@@ -137,8 +143,8 @@ def document(user_id, filename):
 @login_required
 def settings():
     form = SettingsForm(request.form)
-    user = User.query.filter_by(id=current_user.id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    user = User.query.filter_by(id=current_user.id).first()
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
 
     if form.validate_on_submit():
@@ -170,9 +176,9 @@ def settings():
 @bp.route('/delete/<int:file_id>/<delete_or_archive>', methods=['POST'])
 @login_required
 def delete(file_id, delete_or_archive):
-    user = User.query.filter_by(id=current_user.id).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
+
 
     if delete_or_archive == 'del':
         file = File.query.filter_by(id=file_id).first()
@@ -180,7 +186,7 @@ def delete(file_id, delete_or_archive):
     else:
         FileAssociation.query.filter_by(file_id=file_id).update({FileAssociation.file_status: 'archived'})
     db.session.commit()
-    return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url))
+    return redirect(url_for('general.user_files', username=current_user.username, pfp_url=pfp_url, filter='my-files'))
 
 
 @bp.before_request
