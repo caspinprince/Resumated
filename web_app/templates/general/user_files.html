@@ -2,15 +2,12 @@
 {% block content %}
     <div class="container m-4">
         <h2>
-            Documents
+            {{ filter }}
         </h2>
         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                 data-bs-toggle="modal" data-bs-target="#uploadDocModal">
             Upload
         </button>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }}>My Files</a>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }}>Shared Files</a>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }}>Archived Files</a>
     </div>
     <div class="container">
         <table id="fileTable" class="table table-sm table-hover">

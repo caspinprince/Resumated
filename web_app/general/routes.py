@@ -119,7 +119,7 @@ def user_files(username, filter):
             print(e)
         return redirect(url_for('general.user_files', username=user.username, pfp_url=pfp_url, filter='my-files'))
 
-    return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list)
+    return render_template('general/user_files.html', user=user, pfp_url=pfp_url, form=form, file_list=file_list, filter=filter)
 
 
 @bp.route('/document/<user_id>/<filename>', methods=['GET', 'POST'])

@@ -15,16 +15,28 @@
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
                     <div class="dropdown">
-                        <a href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Documents</a>
+                        <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
+                            <li>
+                                <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">My Files</a>
+                            </li>
+                            <li>
+                                <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }} class="dropdown-item">Shared Files</a>
+                            </li>
+                            <li>
+                                <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }} class="dropdown-item">Archived Files</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <a class="me-2" href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
                                  alt="Generic placeholder image" class="img-fluid rounded-circle" style="width: 40px; z-index: 1">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
                             <li>
                                 <a href={{ url_for('general.user', username=current_user.username) }} class="dropdown-item">Profile</a>
-                            </li>
-                            <li>
-                                <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">Documents</a>
                             </li>
                             <li>
                                 <a href={{ url_for('general.settings', username=current_user.username) }} class="dropdown-item">Settings</a>
