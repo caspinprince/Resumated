@@ -74,7 +74,8 @@ def user(username):
     else:
         if review_form.validate_on_submit():
             file_id = review_form.document.data
-            assoc = FileAssociation(user_status="shared", file_status="active", user_id=user.id, file_id=file_id)
+            requests = review_form.requests.data
+            assoc = FileAssociation(user_status="shared", file_status="active", user_id=user.id, file_id=file_id, requests=requests)
             assoc.file = File.query.filter_by(id=file_id).first()
             user.files.append(assoc)
             db.session.add(user)
@@ -131,6 +132,7 @@ def document(user_id, filename):
 
     owner = int(user_id) == current_user.id
     file = File.query.filter_by(filename=filename, user_id=user_id).first()
+    requests = FileAssociation.query.filter_by(file_id = file.id, user_id = current_user.id).first().requests
 
     if form.validate_on_submit():
         db.session.add(Feedback(file_id=file.id, feedback=form.review.data, user_id=current_user.id))
@@ -148,7 +150,7 @@ def document(user_id, filename):
         feedback_data.append(data)
     return render_template('general/document.html',
                            file_url=urllib.parse.quote(generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")),
-                           pfp_url=pfp_url, form=form, owner=owner, feedback_data=feedback_data)
+                           pfp_url=pfp_url, form=form, owner=owner, feedback_data=feedback_data, requests=requests)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])

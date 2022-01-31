@@ -15,6 +15,7 @@ class FileAssociation(db.Model):
     file_id = db.Column(db.Integer, db.ForeignKey('File.id'), primary_key=True)
     user_status = db.Column(db.String(50), nullable=False)
     file_status = db.Column(db.String(25), nullable=False)
+    requests = db.Column(db.String(2000), nullable=True)
     user = db.relationship("User", back_populates="files")
     file = db.relationship("File", back_populates="users")
 

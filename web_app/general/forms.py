@@ -37,12 +37,12 @@ class SettingsForm(FlaskForm):
 
 class RequestReviewForm(FlaskForm):
     document = SelectField('Select a Document')
-    requests = TextAreaField('Special Requests', validators=[Length(min=0, max=1000)])
+    requests = TextAreaField('Special Requests', validators=[DataRequired(), Length(min=0, max=2000)])
     submit = SubmitField('Submit')
 
 
 class ReviewForm(FlaskForm):
-    review = TextAreaField('Comments', validators=[DataRequired(), Length(min=0, max=1000)])
+    review = TextAreaField('Comments', validators=[DataRequired(), Length(min=0, max=10000)])
     submit = SubmitField('Submit')
 
 
