@@ -1,17 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-    <div class="jumbotron">
-        {% if current_user.is_authenticated %}
-        <h1>Welcome to Rezume!</h1>
-        {% else %}
-        <h1>Welcome to Rezume {{ current_user.username }}</h1>
-        {% endif %}
-        <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur corporis cum deleniti eius enim, est eum
-            fugit illo molestiae nam neque numquam quod, repellat reprehenderit sequi sint tenetur ullam voluptas.</p>
+    <div class="home-section-wrapper">
+        <div class="home-title">Document Reviewing Platform</div>
+        <br>
+        <div class="home-title">for Resumes, Applications, and More</div>
+        <div class="home-subtitle">Get personalized feedback from professionals in your industry.</div>
+        <a href={{ url_for('auth.signup') }} class="btn start-btn btn-lg">Get Started</a>
+        <div class="home-image-container">
+            <img class="home-image img-fluid" src="static/home-example.png">
+        </div>
     </div>
-</div>
+    <div class="about-section-wrapper">
+        <div class="section-pre-header">
+            Features
+        </div>
+        <div class="section-header">
+            Why Rezume?
+        </div>
+        <div class="section-sub-header">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias cumque deserunt, eaque eius facilis iure necessitatibus placeat provident suscipit.
+        </div>
+        <div class="row" style="padding: 50px 40px 80px 40px">
+            <div class="col feature-card">
+                <img src="static/people-fill.svg" style="height: 50px">
+                <div class="feature-card-title">Professional advice</div>
+                <div>Stop asking friends to proofread your documents. Send review requests to experienced professionals from any industry.</div>
+            </div>
+            <div class="col feature-card">
+                <img src="static/gift-fill.svg" style="height: 50px">
+                <div class="feature-card-title">Free</div>
+                <div>Getting your resumes or applications ready to submit is hard. Create an account to get the help you need for free.</div>
+            </div>
+            <div class="col feature-card">
+                <img src="static/clock-fill.svg" style="height: 50px">
+                <div class="feature-card-title">Rapid turnover</div>
+                <div>Get your documents reviewed quickly to accelerate your editing process. Send requests to multiple reviewers for even faster service.</div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

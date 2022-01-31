@@ -7,54 +7,50 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
-<body style="background-color: #f2f2f2">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #224e7f">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
-
-        <div class="d-flex align-items-center">
-
-            {% if current_user.is_authenticated %}
-                <a href={{ url_for('general.home') }} class="btn btn-outline-light me-2">Explore</a>
-                <div class="dropdown">
-                    <a href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
-                             alt="Generic placeholder image" class="img-fluid rounded-circle" style="width: 40px; z-index: 1">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
-                        <li>
-                            <a href={{ url_for('general.user', username=current_user.username) }} class="dropdown-item">Profile</a>
-                        </li>
-                        <li>
-                            <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">Documents</a>
-                        </li>
-                        <li>
-                            <a href={{ url_for('general.settings', username=current_user.username) }} class="dropdown-item">Settings</a>
-                        </li>
-                        <hr>
-                        <li>
-                            <a href={{ url_for('auth.logout') }} class="dropdown-item">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            {% else %}
-                <a href={{ url_for('auth.login') }} class="btn btn-outline-light me-2">Login</a>
-
-                <a href={{ url_for('auth.signup') }} class="btn btn-warning">Sign up</a>
-
-            {% endif %}
+            <div class="d-flex align-items-center">
+                {% if current_user.is_authenticated %}
+                    <a href={{ url_for('general.home') }} class="btn btn-outline-light me-2">Explore</a>
+                    <div class="dropdown">
+                        <a href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
+                                 alt="Generic placeholder image" class="img-fluid rounded-circle" style="width: 40px; z-index: 1">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
+                            <li>
+                                <a href={{ url_for('general.user', username=current_user.username) }} class="dropdown-item">Profile</a>
+                            </li>
+                            <li>
+                                <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">Documents</a>
+                            </li>
+                            <li>
+                                <a href={{ url_for('general.settings', username=current_user.username) }} class="dropdown-item">Settings</a>
+                            </li>
+                            <hr>
+                            <li>
+                                <a href={{ url_for('auth.logout') }} class="dropdown-item">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href={{ url_for('auth.login') }} style="color: white;" class="btn me-2">Login</a>
+                    <a href={{ url_for('auth.signup') }} class="btn" style="background-color: #325b89; color: white;">Sign up</a>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<body style="background-color: #f2f2f2; margin-top: 56px">
 
-{% block content %}
+    {% block content %}
 
 
-{% endblock %}
+    {% endblock %}
 
 </body>
 </html>
