@@ -87,27 +87,33 @@
                                             data-bs-target="#requestReviewModal">
                                         Request a review
                                     </button>
-                                    <div class="modal fade" id="requestReviewModal" tabindex="-1" aria-labelledby="reviewRequestModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="requestReviewModal" tabindex="-1"
+                                         aria-labelledby="reviewRequestModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="reviewRequestModalLabel" style="color: black;">Request a Review</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <h5 class="modal-title" id="reviewRequestModalLabel"
+                                                        style="color: black;">Request a Review</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                 </div>
                                                 <form class="row g-3" method="post" enctype="multipart/form-data">
                                                     <div class="modal-body">
                                                         {{ review_form.hidden_tag() }}
                                                         <div class="col-12">
                                                             {{ review_form.document.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
-                                                            {{ review_form.document(class="form-control")}}
+                                                            {{ review_form.document(class="form-control") }}
                                                         </div>
-                                                        <div class="col-12 mt-2" style="color: black; margin-bottom: -10px;">
+                                                        <div class="col-12 mt-2"
+                                                             style="color: black; margin-bottom: -10px;">
                                                             {{ review_form.requests.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
-                                                            {{ review_form.requests(class="form-control", maxlength="1000")}}
+                                                            {{ review_form.requests(class="form-control", maxlength="1000") }}
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close
+                                                        </button>
                                                         {{ review_form.submit(class="btn btn-primary") }}
                                                     </div>
                                                 </form>

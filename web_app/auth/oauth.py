@@ -1,11 +1,13 @@
 import os
-from flask_dance.contrib.google import make_google_blueprint, google
-from sqlalchemy.orm.exc import NoResultFound
-from flask_login import current_user, login_user
+
+from flask import redirect, url_for
 from flask_dance.consumer import oauth_authorized
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_login import login_user
+from sqlalchemy.orm.exc import NoResultFound
+
 from web_app import db
 from web_app.models import User
-from flask import redirect, url_for
 from web_app.utilities import init_settings
 
 blueprint = make_google_blueprint(

@@ -1,8 +1,10 @@
-from web_app import db, login_manager
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from datetime import datetime, date
 import uuid
+from datetime import datetime
+
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from web_app import db, login_manager
 
 
 @login_manager.user_loader
@@ -39,7 +41,7 @@ class User(db.Model, UserMixin):
     settings = db.relationship("Settings", lazy=True, backref="users")
 
     def __init__(
-        self, first_name, last_name, email, username, password=None, google_id=None
+            self, first_name, last_name, email, username, password=None, google_id=None
     ):
         self.first_name = first_name
         self.last_name = last_name

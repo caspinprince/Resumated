@@ -1,18 +1,16 @@
+from flask_login import current_user
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileSize
 from wtforms import (
     StringField,
-    PasswordField,
     SubmitField,
     BooleanField,
     TextAreaField,
     FileField,
     SelectField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
-from flask import render_template, redirect, url_for
-from flask_login import current_user
-from flask_wtf.file import FileAllowed, FileSize, FileRequired
-from web_app.utilities import get_user_files
+from wtforms.validators import DataRequired, Length, ValidationError
+
 from web_app.models import User
 
 
@@ -30,8 +28,8 @@ class EditProfileForm(FlaskForm):
 
     def validate_username(self, username):
         if (
-            User.query.filter_by(username=username.data).first()
-            and username.data != current_user.username
+                User.query.filter_by(username=username.data).first()
+                and username.data != current_user.username
         ):
             raise ValidationError("Username is already taken!")
 

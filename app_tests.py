@@ -2,11 +2,12 @@
 
 import os
 import unittest
-from flask import current_app, url_for, request
+
+from flask import current_app
+
 from app import create_app, db
-from web_app.models import User
 from config import Config
-from flask_login import current_user
+from web_app.models import User
 
 
 class TestConfig(Config):

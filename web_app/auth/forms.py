@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
-from flask import render_template, redirect, url_for
-from flask_login import current_user
 
 from web_app.models import User
 
@@ -20,7 +18,7 @@ class LoginForm(FlaskForm):
     def validate_password(self, field):
         user = User.query.filter_by(email=self.email.data).first()
         if user is not None and (
-            user.password_hash is None or not user.password_check(password=field.data)
+                user.password_hash is None or not user.password_check(password=field.data)
         ):
             raise ValidationError("Incorrect password!")
 

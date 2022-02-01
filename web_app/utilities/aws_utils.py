@@ -1,7 +1,6 @@
-import boto3
-import os
 import io
-import glob
+
+import boto3
 from PIL import Image
 
 

@@ -1,9 +1,12 @@
-import os
-from flask_dance.contrib.google import make_google_blueprint, google
-from web_app import db
-from flask import render_template, redirect, request, url_for, flash, abort
+import urllib.parse
+from datetime import datetime
+
+from flask import render_template, redirect, request, url_for
 from flask_login import current_user, login_required
-from web_app.models import User, File, Settings, FileAssociation, Feedback
+from werkzeug.datastructures import CombinedMultiDict
+
+from web_app import db
+from web_app.general import bp
 from web_app.general.forms import (
     EditProfileForm,
     UploadDocForm,
@@ -11,7 +14,7 @@ from web_app.general.forms import (
     RequestReviewForm,
     ReviewForm,
 )
-from datetime import datetime, timedelta
+from web_app.models import User, File, Settings, FileAssociation, Feedback
 from web_app.utilities import (
     time_diff,
     upload_pfp_to_s3,
@@ -19,10 +22,6 @@ from web_app.utilities import (
     generate_url,
     get_user_files,
 )
-from web_app.general import bp
-from werkzeug.utils import secure_filename
-from werkzeug.datastructures import CombinedMultiDict
-import urllib.parse
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -43,8 +42,8 @@ def home():
                 Settings.value,
                 Settings.key,
             )
-            .join(User.settings)
-            .filter(Settings.key == "seller_account")
+                .join(User.settings)
+                .filter(Settings.key == "seller_account")
         )
         pfp_links = {
             user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
@@ -201,8 +200,8 @@ def document(user_id, filename):
     file = File.query.filter_by(filename=filename, user_id=user_id).first()
     requests = (
         FileAssociation.query.filter_by(file_id=file.id, user_id=current_user.id)
-        .first()
-        .requests
+            .first()
+            .requests
     )
 
     if form.validate_on_submit():
@@ -344,6 +343,6 @@ def current_user_info():
         "account_type": Settings.query.filter_by(
             user_id=current_user.id, key="seller_account"
         )
-        .first()
-        .value
+            .first()
+            .value
     }

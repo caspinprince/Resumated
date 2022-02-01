@@ -1,9 +1,10 @@
-from flask import render_template, redirect, request, url_for, flash, abort
-from flask_login import login_user, login_required, logout_user, current_user
-from web_app.models import User
+from flask import render_template, redirect, request, url_for, flash
+from flask_login import login_user, login_required, logout_user
+
 from web_app import db
-from web_app.auth.forms import LoginForm, RegistrationForm
 from web_app.auth import bp
+from web_app.auth.forms import LoginForm, RegistrationForm
+from web_app.models import User
 from web_app.utilities import init_settings
 
 

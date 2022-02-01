@@ -1,5 +1,5 @@
-from web_app.models import Settings, FileAssociation, User
 from web_app import db
+from web_app.models import Settings, FileAssociation, User
 
 default_settings = {
     "seller_account": False,

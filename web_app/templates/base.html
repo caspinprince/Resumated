@@ -3,80 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>Rezume</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #224e7f">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #224e7f">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
 
-            <div class="d-flex align-items-center">
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
-                    {% if account_type == '1' %}
-                        <div class="dropdown">
-                            <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Requests</a>
-                            <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
-                                <li>
-                                    <a href={{ url_for('general.requests') }} class="dropdown-item">Received</a>
-                                </li>
-                                <li>
-                                    <a href={{ url_for('general.requests') }} class="dropdown-item">Sent</a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <a href="{{ url_for('general.requests') }}" class="btn me-2" style="color: white;">Requests</a>
-                    {% endif %}
+        <div class="d-flex align-items-center">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
+                {% if account_type == '1' %}
                     <div class="dropdown">
-                        <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Documents</a>
+                        <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown"
+                           aria-expanded="false">Requests</a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
                             <li>
-                                <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">My Files</a>
+                                <a href={{ url_for('general.requests') }} class="dropdown-item">Received</a>
                             </li>
                             <li>
-                                <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }} class="dropdown-item">Shared Files</a>
-                            </li>
-                            <li>
-                                <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }} class="dropdown-item">Archived Files</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <a class="me-2" href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
-                                 alt="Generic placeholder image" class="img-fluid rounded-circle" style="width: 40px; z-index: 1">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
-                            <li>
-                                <a href={{ url_for('general.user', username=current_user.username) }} class="dropdown-item">Profile</a>
-                            </li>
-                            <li>
-                                <a href={{ url_for('general.settings', username=current_user.username) }} class="dropdown-item">Settings</a>
-                            </li>
-                            <hr>
-                            <li>
-                                <a href={{ url_for('auth.logout') }} class="dropdown-item">Logout</a>
+                                <a href={{ url_for('general.requests') }} class="dropdown-item">Sent</a>
                             </li>
                         </ul>
                     </div>
                 {% else %}
-                    <a href={{ url_for('auth.login') }} style="color: white;" class="btn me-2">Login</a>
-                    <a href={{ url_for('auth.signup') }} class="btn" style="background-color: #325b89; color: white;">Sign up</a>
+                    <a href="{{ url_for('general.requests') }}" class="btn me-2" style="color: white;">Requests</a>
                 {% endif %}
-            </div>
+                <div class="dropdown">
+                    <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Documents</a>
+                    <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
+                        <li>
+                            <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }} class="dropdown-item">My
+                                Files</a>
+                        </li>
+                        <li>
+                            <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }} class="dropdown-item">Shared
+                                Files</a>
+                        </li>
+                        <li>
+                            <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }} class="dropdown-item">Archived
+                                Files</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <a class="me-2" href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"
+                             alt="Generic placeholder image" class="img-fluid rounded-circle"
+                             style="width: 40px; z-index: 1">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px;">
+                        <li>
+                            <a href={{ url_for('general.user', username=current_user.username) }} class="dropdown-item">Profile</a>
+                        </li>
+                        <li>
+                            <a href={{ url_for('general.settings', username=current_user.username) }} class="dropdown-item">Settings</a>
+                        </li>
+                        <hr>
+                        <li>
+                            <a href={{ url_for('auth.logout') }} class="dropdown-item">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href={{ url_for('auth.login') }} style="color: white;" class="btn me-2">Login</a>
+                <a href={{ url_for('auth.signup') }} class="btn" style="background-color: #325b89; color: white;">Sign
+                    up</a>
+            {% endif %}
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <body style="background-color: #f2f2f2; margin-top: 56px">
 
-    {% block content %}
+{% block content %}
 
 
-    {% endblock %}
+{% endblock %}
 
 </body>
 </html>
