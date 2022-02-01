@@ -6,52 +6,56 @@ from web_app.auth.forms import LoginForm, RegistrationForm
 from web_app.auth import bp
 from web_app.utilities import init_settings
 
-@bp.route('/logout')
+
+@bp.route("/logout")
 @login_required
 def logout():
     logout_user()
     flash("You logged out!")
-    return redirect(url_for('general.home'))
+    return redirect(url_for("general.home"))
 
-@bp.route('/login', methods=['GET', 'POST'])
+
+@bp.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.password_check(password=form.password.data):
             login_user(user, remember=form.remember_me.data)
-            flash('Logged in!')
+            flash("Logged in!")
 
-            next = request.args.get('next')
+            next = request.args.get("next")
 
-            if next is None or not next[0]=='/':
-                next = url_for('general.home')
+            if next is None or not next[0] == "/":
+                next = url_for("general.home")
 
             return redirect(next)
 
-    return render_template('auth/login.html', form=form)
+    return render_template("auth/login.html", form=form)
 
-@bp.route('/signup_google', methods=['GET', 'POST'])
+
+@bp.route("/signup_google", methods=["GET", "POST"])
 def signup_google():
-    return redirect(url_for('google.login'))
+    return redirect(url_for("google.login"))
 
 
-
-@bp.route('/signup', methods=['GET', 'POST'])
+@bp.route("/signup", methods=["GET", "POST"])
 def signup():
     form = RegistrationForm(request.form)
 
     if form.validate_on_submit():
-        user = User(email=form.email.data,
-                    first_name=form.first_name.data,
-                    last_name=form.last_name.data,
-                    username=form.username.data,
-                    password=form.password.data)
+        user = User(
+            email=form.email.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            username=form.username.data,
+            password=form.password.data,
+        )
         db.session.add(user)
         db.session.commit()
 
         init_settings(user.id)
         flash("Thanks for signing up!")
-        return redirect(url_for('auth.login'))
+        return redirect(url_for("auth.login"))
 
-    return render_template('auth/signup.html', form=form)
+    return render_template("auth/signup.html", form=form)
