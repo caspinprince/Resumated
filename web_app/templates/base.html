@@ -14,6 +14,21 @@
             <div class="d-flex align-items-center">
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
+                    {% if account_type == '1' %}
+                        <div class="dropdown">
+                            <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Requests</a>
+                            <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
+                                <li>
+                                    <a href={{ url_for('general.requests') }} class="dropdown-item">Received</a>
+                                </li>
+                                <li>
+                                    <a href={{ url_for('general.requests') }} class="dropdown-item">Sent</a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('general.requests') }}" class="btn me-2" style="color: white;">Requests</a>
+                    {% endif %}
                     <div class="dropdown">
                         <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Documents</a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
@@ -28,7 +43,6 @@
                             </li>
                         </ul>
                     </div>
-
                     <div class="dropdown">
                         <a class="me-2" href="#" id="navbarDarkDropdownMenuLink" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src={{ pfp_url }} onerror="this.src='../static/default_pfp.jpg'"

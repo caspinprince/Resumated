@@ -44,8 +44,8 @@ def user(username):
 
     user_pfp_file = f"images/{user.pfp_id}.jpg"
     user_pfp_url = generate_url(BUCKET, user_pfp_file)
-
     seller_account = Settings.query.filter_by(user_id=user.id, key='seller_account').first()
+
     show_profile_views = Settings.query.filter_by(user_id=user.id, key='show_profile_views').first()
     show_last_seen = Settings.query.filter_by(user_id=user.id, key='show_last_seen').first()
 
@@ -84,8 +84,7 @@ def user(username):
     return render_template('general/user.html', user=user, profile_form=profile_form, review_form=review_form,
                            last_seen=last_seen, pfp_url=pfp_url,
                            show_profile_views=show_profile_views, show_last_seen=show_last_seen,
-                           user_pfp_url=user_pfp_url,
-                           seller_account=seller_account)
+                           user_pfp_url=user_pfp_url, seller_account=seller_account)
 
 
 @bp.route('/user_files/<username>/<filter>', methods=['GET', 'POST'])
@@ -186,6 +185,12 @@ def settings():
 
     return render_template('general/settings.html', pfp_url=pfp_url, form=form)
 
+@bp.route('/requests', methods=['GET', 'POST'])
+@login_required
+def requests():
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/requests.html', pfp_url=pfp_url)
 
 @bp.route('/delete/<int:file_id>/<delete_or_archive>', methods=['POST'])
 @login_required
@@ -209,3 +214,7 @@ def before_request():
         user = User.query.filter_by(username=current_user.username).first_or_404()
         user.last_online = datetime.utcnow()
         db.session.commit()
+
+@bp.context_processor
+def current_user_info():
+    return {'account_type': Settings.query.filter_by(user_id=current_user.id, key='seller_account').first().value}
