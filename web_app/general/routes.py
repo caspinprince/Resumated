@@ -21,6 +21,7 @@ from web_app.utilities import (
     upload_doc_to_s3,
     generate_url,
     get_user_files,
+    delete_object_s3
 )
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
@@ -42,8 +43,8 @@ def home():
                 Settings.value,
                 Settings.key,
             )
-                .join(User.settings)
-                .filter(Settings.key == "seller_account")
+            .join(User.settings)
+            .filter(Settings.key == "seller_account")
         )
         pfp_links = {
             user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
@@ -200,8 +201,8 @@ def document(user_id, filename):
     file = File.query.filter_by(filename=filename, user_id=user_id).first()
     requests = (
         FileAssociation.query.filter_by(file_id=file.id, user_id=current_user.id)
-            .first()
-            .requests
+        .first()
+        .requests
     )
 
     if form.validate_on_submit():
@@ -314,6 +315,7 @@ def delete(file_id, delete_or_archive):
         if delete_or_archive == "del":
             file = File.query.filter_by(id=file_id).first()
             db.session.delete(file)
+            delete_object_s3(BUCKET, f"documents/{current_user.pfp_id}{file.filename}")
         else:
             FileAssociation.query.filter_by(file_id=file_id).update(
                 {FileAssociation.file_status: "archived"}
@@ -339,10 +341,14 @@ def before_request():
 
 @bp.context_processor
 def current_user_info():
-    return {
-        "account_type": Settings.query.filter_by(
-            user_id=current_user.id, key="seller_account"
-        )
-            .first()
-            .value
-    }
+    print(current_user.is_authenticated)
+    if current_user.is_authenticated:
+        return {
+            "account_type": Settings.query.filter_by(
+                user_id=current_user.id, key="seller_account"
+            )
+                .first()
+                .value
+        }
+    else:
+        return {}
