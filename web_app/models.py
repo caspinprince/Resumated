@@ -17,7 +17,7 @@ class FileAssociation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey("File.id"), primary_key=True)
     user_status = db.Column(db.String(50), nullable=False)
-    file_status = db.Column(db.String(25), nullable=False)
+    request_status = db.Column(db.String(25), nullable=True)
     requests = db.Column(db.String(2000), nullable=True)
     user = db.relationship("User", back_populates="files")
     file = db.relationship("File", back_populates="users")
@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
     settings = db.relationship("Settings", lazy=True, backref="users")
 
     def __init__(
-            self, first_name, last_name, email, username, password=None, google_id=None
+        self, first_name, last_name, email, username, password=None, google_id=None
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -70,6 +70,7 @@ class File(db.Model):
     feedback = db.relationship(
         "Feedback", lazy=True, backref="file", cascade="all, delete-orphan"
     )
+    file_status = db.Column(db.String(25), nullable=False)
 
 
 class Settings(db.Model):
