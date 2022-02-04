@@ -21,7 +21,7 @@ from web_app.utilities import (
     upload_doc_to_s3,
     generate_url,
     get_user_files,
-    delete_object_s3
+    delete_object_s3,
 )
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
@@ -115,7 +115,6 @@ def user(username):
             requests = review_form.requests.data
             assoc = FileAssociation(
                 user_status="shared",
-                file_status="active",
                 user_id=user.id,
                 file_id=file_id,
                 requests=requests,
@@ -163,8 +162,10 @@ def user_files(username, filter):
             if check is not None:
                 check.last_modified = datetime.utcnow()
             else:
-                assoc = FileAssociation(user_status="owner", file_status="active")
-                assoc.file = File(filename=filename, user_id=user.id)
+                assoc = FileAssociation(user_status="owner")
+                assoc.file = File(
+                    filename=filename, user_id=user.id, file_status="active"
+                )
                 current_user.files.append(assoc)
                 db.session.add(current_user)
             db.session.commit()
@@ -317,9 +318,7 @@ def delete(file_id, delete_or_archive):
             db.session.delete(file)
             delete_object_s3(BUCKET, f"documents/{current_user.pfp_id}{file.filename}")
         else:
-            FileAssociation.query.filter_by(file_id=file_id).update(
-                {FileAssociation.file_status: "archived"}
-            )
+            File.query.filter_by(id=file_id).update({File.file_status: "archived"})
         db.session.commit()
     return redirect(
         url_for(
@@ -347,8 +346,8 @@ def current_user_info():
             "account_type": Settings.query.filter_by(
                 user_id=current_user.id, key="seller_account"
             )
-                .first()
-                .value
+            .first()
+            .value
         }
     else:
         return {}
