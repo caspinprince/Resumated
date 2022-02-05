@@ -22,6 +22,7 @@ from web_app.utilities import (
     generate_url,
     get_user_files,
     delete_object_s3,
+    get_requests
 )
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
@@ -118,6 +119,7 @@ def user(username):
                 user_id=user.id,
                 file_id=file_id,
                 requests=requests,
+                request_status="pending"
             )
             assoc.file = File.query.filter_by(id=file_id).first()
             user.files.append(assoc)
@@ -214,7 +216,8 @@ def document(user_id, filename):
         )
         FileAssociation.query.filter_by(
             file_id=file.id, user_id=current_user.id
-        ).delete()
+        ).update({FileAssociation.request_status: "complete"})
+
         db.session.commit()
         return redirect(
             url_for(
@@ -298,12 +301,14 @@ def settings():
     return render_template("general/settings.html", pfp_url=pfp_url, form=form)
 
 
-@bp.route("/requests", methods=["GET", "POST"])
+@bp.route("/requests/<type>", methods=["GET", "POST"])
 @login_required
-def requests():
+def requests(type):
     pfp_file = f"images/{current_user.pfp_id}.jpg"
     pfp_url = generate_url(BUCKET, pfp_file)
-    return render_template("general/requests.html", pfp_url=pfp_url)
+
+    request_list = get_requests(current_user.id, type)
+    return render_template("general/requests.html", type=type, pfp_url=pfp_url, request_list=request_list)
 
 
 @bp.route("/delete/<int:file_id>/<delete_or_archive>", methods=["POST"])
@@ -326,6 +331,24 @@ def delete(file_id, delete_or_archive):
             username=current_user.username,
             pfp_url=pfp_url,
             filter="my-files",
+        )
+    )
+
+@bp.route("/accept/<int:file_id>/<accepted_or_declined>", methods=["POST"])
+@login_required
+def accept(file_id, accepted_or_declined):
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+
+    FileAssociation.query.filter_by(
+        file_id=file_id, user_id=current_user.id
+    ).update({FileAssociation.request_status: accepted_or_declined})
+    db.session.commit()
+
+    return redirect(
+        url_for(
+            "general.requests",
+            type='received'
         )
     )
 

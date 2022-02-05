@@ -41,10 +41,11 @@ def get_user_files(user_id, filter):
                 File.last_modified,
                 FileAssociation.user_status,
                 File.user_id,
+                FileAssociation.request_status,
             )
             .filter_by(file_status="active")
             .outerjoin(FileAssociation, File.id == FileAssociation.file_id)
-            .filter_by(user_id=user_id, user_status="shared")
+            .filter_by(user_id=user_id, user_status="shared", request_status="accepted")
         )
     elif filter == "archive":
         file_assoc = (
@@ -76,21 +77,55 @@ def get_user_files(user_id, filter):
     return file_list
 
 
-def get_requests(user_id):
-    request_list = FileAssociation.query.filter_by(
-        user_id=user_id, user_status="owner", file_status="active"
-    )
+def get_requests(user_id, type):
+    if type == "sent":
+        file_assoc = (
+            db.session.query(File, FileAssociation)
+            .add_columns(
+                File.id,
+                File.filename,
+                FileAssociation.user_status,
+                FileAssociation.user_id,
+                FileAssociation.request_status,
+            )
+            .outerjoin(FileAssociation, File.id == FileAssociation.file_id)
+            .filter(File.user_id == user_id, FileAssociation.user_status == "shared")
+        )
+        request_list = [
+            {
+                "filename": file.filename,
+                "reviewer": User.query.filter_by(id=file.user_id).first().username,
+                "status": file.request_status,
+                "owner_id": File.query.filter_by(id=file.id).first().user_id,
+                "file_id": file.id,
+            }
+            for file in file_assoc
+        ]
 
-    # file_list = [
-    #     {
-    #         "filename": file.file.filename,
-    #         "last_modified": file.file.last_modified,
-    #         "owner": "me"
-    #         if file.user_status == "owner"
-    #         else User.query.filter_by(id=file.file.user_id).first().username,
-    #         "file_id": file.file_id,
-    #         "owner_id": User.query.filter_by(id=file.file.user_id).first().id,
-    #     }
-    #     for file in file_assoc
-    # ]
-    # return file_list
+    elif type == "received":
+        file_assoc = (
+            db.session.query(File, FileAssociation)
+            .add_columns(
+                File.id,
+                File.filename,
+                FileAssociation.user_status,
+                FileAssociation.user_id,
+                FileAssociation.request_status,
+            )
+            .outerjoin(FileAssociation, File.id == FileAssociation.file_id)
+            .filter(
+                FileAssociation.user_id == user_id,
+                FileAssociation.user_status == "shared",
+            )
+        )
+        request_list = [
+            {
+                "filename": file.filename,
+                "reviewer": User.query.filter_by(id=file.user_id).first().username,
+                "status": file.request_status,
+                "file_id": file.id,
+            }
+            for file in file_assoc
+        ]
+
+    return request_list

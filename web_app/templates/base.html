@@ -21,15 +21,15 @@
                            aria-expanded="false">Requests</a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
                             <li>
-                                <a href={{ url_for('general.requests') }} class="dropdown-item">Received</a>
+                                <a href={{ url_for('general.requests', type='received') }} class="dropdown-item">Received</a>
                             </li>
                             <li>
-                                <a href={{ url_for('general.requests') }} class="dropdown-item">Sent</a>
+                                <a href={{ url_for('general.requests', type='sent') }} class="dropdown-item">Sent</a>
                             </li>
                         </ul>
                     </div>
                 {% else %}
-                    <a href="{{ url_for('general.requests') }}" class="btn me-2" style="color: white;">Requests</a>
+                    <a href="{{ url_for('general.requests', type='sent') }}" class="btn me-2" style="color: white;">Requests</a>
                 {% endif %}
                 <div class="dropdown">
                     <a id="navbar" class="btn me-2" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">Documents</a>
