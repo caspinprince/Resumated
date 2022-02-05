@@ -28,8 +28,8 @@ class EditProfileForm(FlaskForm):
 
     def validate_username(self, username):
         if (
-                User.query.filter_by(username=username.data).first()
-                and username.data != current_user.username
+            User.query.filter_by(username=username.data).first()
+            and username.data != current_user.username
         ):
             raise ValidationError("Username is already taken!")
 

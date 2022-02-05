@@ -37,7 +37,7 @@ def upload_doc_to_s3(doc_file, bucket, file_name, content_type):
 
 
 def delete_object_s3(bucket, file_name):
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3")
     s3_client.delete_object(Bucket=bucket, Key=file_name)
 
 
