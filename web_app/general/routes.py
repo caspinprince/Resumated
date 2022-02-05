@@ -4,15 +4,16 @@ from datetime import datetime
 from flask import render_template, redirect, request, url_for
 from flask_login import current_user, login_required
 from werkzeug.datastructures import CombinedMultiDict
-
 from web_app import db
 from web_app.general import bp
+from sqlalchemy import func
 from web_app.general.forms import (
     EditProfileForm,
     UploadDocForm,
     SettingsForm,
     RequestReviewForm,
     ReviewForm,
+    SearchForm,
 )
 from web_app.models import User, File, Settings, FileAssociation, Feedback
 from web_app.utilities import (
@@ -29,9 +30,10 @@ IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
 
 
-@bp.route("/")
+@bp.route("/", methods=["POST", "GET"])
 def home():
     if current_user.is_authenticated:
+        search_form = SearchForm(request.form)
         users = (
             db.session.query(
                 User.id,
@@ -47,13 +49,27 @@ def home():
             .join(User.settings)
             .filter(Settings.key == "seller_account")
         )
+
+        if search_form.validate_on_submit():
+            search = search_form.search.data
+            print(search)
+            users = users.filter(
+                (func.lower(User.first_name).like(func.lower(f"%{search}%")))
+                | func.lower(User.last_name).like(func.lower(f"%{search}%"))
+            )
+
         pfp_links = {
             user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
             for user in users
         }
-        pfp_url = pfp_links[current_user.username]
+        pfp_file = f"images/{current_user.pfp_id}.jpg"
+        pfp_url = generate_url(BUCKET, pfp_file)
         return render_template(
-            "general/user_home.html", users=users, pfp_links=pfp_links, pfp_url=pfp_url
+            "general/user_home.html",
+            users=users,
+            pfp_links=pfp_links,
+            pfp_url=pfp_url,
+            search_form=search_form,
         )
     else:
         return render_template("general/home.html")

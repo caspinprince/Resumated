@@ -71,3 +71,8 @@ class ReviewForm(FlaskForm):
         "Comments", validators=[DataRequired(), Length(min=0, max=10000)]
     )
     submit = SubmitField("Submit")
+
+
+class SearchForm(FlaskForm):
+    search = StringField(validators=[DataRequired()])
+    submit = SubmitField("Search")
