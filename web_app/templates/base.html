@@ -11,7 +11,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #224e7f">
     <div class="container">
         <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
-
+        {% if current_user.is_authenticated and request.endpoint == 'general.home' %}
+            <form class="d-flex" style="display: block" method="post" enctype="multipart/form-data">
+                {{ search_form.csrf_token }}
+                {{ search_form.hidden_tag() }}
+                {{ search_form.search(class="form-control me-2", type="search", placeholder="Search") }}
+                {{ search_form.submit(class="btn btn-primary") }}
+            </form>
+        {% endif %}
         <div class="d-flex align-items-center">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
