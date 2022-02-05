@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container m-4">
+        <h2>
+            {{ type.capitalize() }} Requests
+        </h2>
+    </div>
+    <div class="container">
+        <table id="fileTable" class="table table-sm table-hover">
+            <thead>
+            <tr>
+                <th class="th-sm" scope="col">File Name</th>
+                <th class="th-sm" scope="col">Reviewer</th>
+                <th class="th-sm" scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in request_list %}
+                <tr>
+                    {% if type == 'sent' %}
+                        <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = file['owner_id'],
+                        filename=file['filename']) }}>{{ file['filename'] }}</a></th>
+                    {% elif type == 'received' %}
+                        <th scope="row"><a class="btn" }>{{ file['filename'] }}</a></th>
+                    {% endif %}
+                    <td class="align-middle">{{ file['reviewer'] }}</td>
+                    <td class="align-middle">{{ file['status'] }}</td>
+                    {% if type == 'received' and file['status'] == 'pending' %}
+                        <form method="post"
+                              action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="accepted") }}">
+                            <td class="align-middle"><input class="btn btn-success" type="submit" name="archive"
+                                                            value="Accept"></td>
+                        </form>
+                        <form method="post"
+                              action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="declined") }}">
+                            <td class="align-middle"><input class="btn btn-danger" type="submit" name="delete"
+                                                            value="Decline"></td>
+                        </form>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

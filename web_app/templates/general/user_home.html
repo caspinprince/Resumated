@@ -6,26 +6,28 @@
                 <div class="col-md-3 mb-5 mb-md-0" style="padding:20px;">
                     <div class="card testimonial-card" style="border-radius: 10px;">
                         {% if user.value == '1' %}
-                            <span style="height: 20px; margin-bottom: -20px; border-radius: 10px 10px 0px 0px; z-index: 2" class="badge bg-warning text-dark">Reviewer</span>
+                            <span style="height: 20px; margin-bottom: -20px; border-radius: 10px 10px 0px 0px; z-index: 2"
+                                  class="badge bg-warning text-dark">Reviewer</span>
                         {% endif %}
                         <div class="card-up" style="background-color: #484e53; border-radius:10px 10px 0px 0px;"></div>
                         <div class="avatar mx-auto bg-white">
                             <a href={{ url_for('general.user', username=user.username) }}>
                                 <img
                                         src={{ pfp_links[user.username] }}
-                                        onerror="this.src='../static/default_pfp.jpg'"
+                                                onerror="this.src='../static/default_pfp.jpg'"
                                         class="rounded-circle img-fluid"/>
                             </a>
 
                         </div>
                         <div class="card-body" style="border-radius: 10px;">
-                            <h4> <a class="profile-link" href={{ url_for('general.user', username=user.username) }}>
+                            <h4><a class="profile-link" href={{ url_for('general.user', username=user.username) }}>
                                 {{ user.first_name }} {{ user.last_name }}
                             </a></h4>
                             <p class="profile-card-headline mb-4">
-                                <a class="profile-link" href={{ url_for('general.user', username=user.username) }}>{{ user.headline }}</a>
+                                <a class="profile-link"
+                                   href={{ url_for('general.user', username=user.username) }}>{{ user.headline }}</a>
                             </p>
-                            <hr />
+                            <hr/>
                             <p class="profile-card-about-me dark-grey-text mt-4">
                                 {{ user.about_me }}
                             </p>

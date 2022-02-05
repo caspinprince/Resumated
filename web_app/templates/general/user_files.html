@@ -2,15 +2,12 @@
 {% block content %}
     <div class="container m-4">
         <h2>
-            Documents
+            {{ filter }}
         </h2>
         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                 data-bs-toggle="modal" data-bs-target="#uploadDocModal">
             Upload
         </button>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='my-files') }}>My Files</a>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='shared') }}>Shared Files</a>
-        <a href={{ url_for('general.user_files', username=current_user.username, filter='archive') }}>Archived Files</a>
     </div>
     <div class="container">
         <table id="fileTable" class="table table-sm table-hover">
@@ -28,10 +25,12 @@
                     filename=file['filename']) }}>{{ file['filename'] }}</a></th>
                     <td class="align-middle">{{ file['owner'] }}</td>
                     <td class="align-middle">{{ file['last_modified'] }}</td>
-                    <form method="post" action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="arch") }}">
+                    <form method="post"
+                          action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="arch") }}">
                         <td class="align-middle"><input class="btn" type="submit" name="archive" value="Archive"></td>
                     </form>
-                    <form method="post" action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="del") }}">
+                    <form method="post"
+                          action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="del") }}">
                         <td class="align-middle"><input class="btn" type="submit" name="delete" value="Delete"></td>
                     </form>
                 </tr>

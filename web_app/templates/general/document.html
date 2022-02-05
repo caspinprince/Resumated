@@ -13,11 +13,13 @@
                         <p>{{ data['feedback'] }}</p>
                     {% endfor %}
                 {% else %}
+                    <div class="fs-3 mt-3 mb-3">Requests</div>
+                    <div class="overflow-auto" style="max-height: 15%">{{ requests }}</div>
                     <form class="row g-3" method="post" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="col-12" style="height: 90vh">
                             {{ form.review.label(class="fs-3 mt-3 mb-3", style="color: black;") }}
-                            {{ form.review(class="form-control", style="height: 90%", placeholder="Leave your feedback here") }}
+                            {{ form.review(class="form-control", style="height: 80%", placeholder="Leave your feedback here") }}
                             {{ form.submit(class="btn btn-primary mt-3 mb-3", style="width:100%") }}
                         </div>
                     </form>
