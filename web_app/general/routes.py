@@ -30,8 +30,10 @@ IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
 
 
-@bp.route("/", methods=["POST", "GET"])
-def home():
+@bp.route("/")
+@bp.route("/explore", methods=["POST", "GET"], defaults={"page": 1})
+@bp.route("/explore/<int:page>", methods=["POST", "GET"])
+def home(page=None):
     if current_user.is_authenticated:
         search_form = SearchForm(request.form)
         users = (
@@ -64,6 +66,9 @@ def home():
         }
         pfp_file = f"images/{current_user.pfp_id}.jpg"
         pfp_url = generate_url(BUCKET, pfp_file)
+
+        users = users.paginate(page, 1, True)
+        print(users)
         return render_template(
             "general/user_home.html",
             users=users,
