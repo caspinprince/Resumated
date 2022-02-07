@@ -2,7 +2,7 @@
 {% block content %}
     <section class="container-xxl">
         <div class="row text-center">
-            {% for user in users %}
+            {% for user in users.items %}
                 <div class="col-md-3 mb-5 mb-md-0" style="padding:20px;">
                     <div class="card testimonial-card" style="border-radius: 10px;">
                         {% if user.value == '1' %}
@@ -35,6 +35,29 @@
                     </div>
                 </div>
             {% endfor %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center" style="margin-top: 30px">
+                    <li class="page-item"><a class="page-link"
+                                             href="{{ url_for('general.home', page=users.prev_num) }}">Previous</a></li>
+                    {% for page in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+                        {% if page %}
+                            {% if page == users.page %}
+                                <li class="page-item active"><a class="page-link"
+                                                                href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link"
+                                                         href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item"><a class="page-link"
+                                             href="{{ url_for('general.home', page=users.next_num) }}">Next</a></li>
+                </ul>
+            </nav>
         </div>
     </section>
 {% endblock %}
