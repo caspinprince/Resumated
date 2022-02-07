@@ -41,9 +41,13 @@
                     {% for page in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
                         {% if page %}
                             {% if page == users.page %}
-                                <li class="page-item active"><a class="page-link" href="{{ url_for('general.home', page=page) }}">{{ page }}</a></li>
+                                <li class="page-item active"><a class="page-link"
+                                                                href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
+                                </li>
                             {% else %}
-                                <li class="page-item"><a class="page-link" href="{{ url_for('general.home', page=page) }}">{{ page }}</a></li>
+                                <li class="page-item"><a class="page-link"
+                                                         href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
+                                </li>
                             {% endif %}
                         {% else %}
                             <li class="page-item disabled"><a class="page-link">...</a></li>
