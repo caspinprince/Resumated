@@ -83,7 +83,7 @@ def home(page=None):
 @bp.route("/user/<username>", methods=["GET", "POST"])
 @login_required
 def user(username):
-    profile_form = EditProfileForm(request.form)
+    profile_form = EditProfileForm(CombinedMultiDict((request.files, request.form)))
 
     review_form = RequestReviewForm(request.form)
     review_form.document.choices = [

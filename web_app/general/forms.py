@@ -21,8 +21,8 @@ class EditProfileForm(FlaskForm):
     headline = StringField("Headline", validators=[Length(min=0, max=250)])
     about_me = TextAreaField("About me", validators=[Length(min=0, max=1000)])
     profile_pic = FileField(
-        "Select a profile picture! (jpg or png)",
-        validators=[FileAllowed(["jpg", "png"]), FileSize(max_size=1)],
+        label="Select a profile picture! (jpg or png)",
+        validators=[FileAllowed(["jpg", "png"]), FileSize(max_size=1000000)],
     )
     submit = SubmitField("Submit")
 
@@ -37,7 +37,8 @@ class EditProfileForm(FlaskForm):
 class UploadDocForm(FlaskForm):
     filename = StringField("File Name", validators=[DataRequired()])
     document = FileField(
-        label="Upload a document! (PDF only)", validators=[FileAllowed(["pdf"])]
+        label="Upload a document! (PDF only)",
+        validators=[FileAllowed(["pdf"]), FileSize(max_size=2000000)],
     )
     submit = SubmitField("Submit")
 
