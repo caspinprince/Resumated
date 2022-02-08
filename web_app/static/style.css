@@ -183,3 +183,16 @@
     width: fit-content;
     height:fit-content;
 }
+
+.btn-theme {
+    color: #fff;
+    background-color: #193453;
+    border-color: #193453;
+}
+
+.btn-theme:hover{
+    color: #FFF;
+    background-color: #1f446f;
+    border-color: #1f446f;
+}
+
