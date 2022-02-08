@@ -163,3 +163,23 @@
     padding-top: 25px;
     padding-bottom: 10px;
 }
+
+.error-title {
+    font-weight: 600;
+    font-size: 65px;
+    line-height: 1.2;
+    color: #224e7f;
+    margin: 30vh auto 25px auto;
+    width: fit-content;
+    height:fit-content;
+}
+
+.error-subtitle {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    color: black;
+    margin: auto;
+    width: fit-content;
+    height:fit-content;
+}

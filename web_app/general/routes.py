@@ -393,3 +393,20 @@ def current_user_info():
         }
     else:
         return {}
+
+
+@bp.app_errorhandler(404)
+def not_found_error(error):
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/404.html', pfp_url=pfp_url), 404
+
+
+@bp.app_errorhandler(500)
+def internal_error(error):
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    db.session.rollback()
+    return render_template('general/500.html', pfp_url=pfp_url), 500
+
+
