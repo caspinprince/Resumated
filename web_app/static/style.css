@@ -97,7 +97,7 @@
 
 .home-section-wrapper {
     width: 100%;
-    background-color: #224e7f;
+    background-color: #193453;
     text-align: center;
     padding-top: 130px;
     align-content: center;
@@ -135,7 +135,7 @@
 }
 
 .section-pre-header {
-    color: #224e7f;
+    color: #193453;
     font-size: 18px;
     font-weight: 600;
 }
@@ -168,7 +168,7 @@
     font-weight: 600;
     font-size: 65px;
     line-height: 1.2;
-    color: #224e7f;
+    color: #193453;
     margin: 30vh auto 25px auto;
     width: fit-content;
     height:fit-content;

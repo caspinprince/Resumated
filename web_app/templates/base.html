@@ -8,17 +8,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #224e7f">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #193453; height: 70px;">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('general.home') }}">Rezume</a>
-        {% if current_user.is_authenticated and request.endpoint == 'general.home' %}
-            <form class="d-flex" style="display: block" method="post" enctype="multipart/form-data">
-                {{ search_form.csrf_token }}
-                {{ search_form.hidden_tag() }}
-                {{ search_form.search(class="form-control me-2", type="search", placeholder="Search") }}
-                {{ search_form.submit(class="btn btn-primary") }}
-            </form>
-        {% endif %}
+        <div class="d-flex">
+            <a class="navbar-brand" style="font-size: 22px;" href="{{ url_for('general.home') }}">Rezumated</a>
+            {% if current_user.is_authenticated and request.endpoint == 'general.home' %}
+                <form class="d-flex" style="display: block; margin: auto 0 auto 25px; height: 35px;" method="post"
+                      enctype="multipart/form-data">
+                    {{ search_form.csrf_token }}
+                    {{ search_form.hidden_tag() }}
+                    {{ search_form.search(class="form-control me-2", type="search", placeholder="Search") }}
+                </form>
+            {% endif %}
+        </div>
+
         <div class="d-flex align-items-center">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: white;">Explore</a>
@@ -88,7 +91,7 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<body style="background-color: #f2f2f2; margin-top: 56px">
+<body style="background-color: #f2f2f2; margin-top: 70px">
 
 {% block content %}
 
