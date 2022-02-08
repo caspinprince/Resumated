@@ -24,7 +24,7 @@
 }
 
 .testimonial-card .avatar {
-    width: 110px;
+    width: 170px;
     margin-top: -60px;
     overflow: hidden;
     border: 3px solid #fff;
@@ -33,6 +33,7 @@
 
 .profile-link {
     color: black;
+    font-weight: 500;
 }
 
 .profile-link:link {
@@ -46,8 +47,6 @@
 }
 
 .profile-card-headline {
-    color: gray;
-    font-weight: 350;
     display: block;
     line-height: 1.5rem !important;
     max-height: 3rem;
@@ -57,6 +56,18 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+}
+
+.profile-headline-link {
+    color: #444444;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.profile-headline-link:hover {
+    color: #444444;
+    text-decoration: underline;
+    font-weight: 500;
 }
 
 .profile-card-about-me {
@@ -69,6 +80,8 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+    font-weight: 400;
+    color: #616161;
 }
 
 .pfp {
@@ -194,5 +207,10 @@
     color: #FFF;
     background-color: #1f446f;
     border-color: #1f446f;
+}
+
+.background-color{
+    background-color: #eaecf1;
+    border-color: #eaecf1;
 }
 

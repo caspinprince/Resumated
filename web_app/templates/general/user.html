@@ -30,7 +30,8 @@
 
                                 {% if user == current_user %}
                                     <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                                            style="z-index: 1;" data-bs-toggle="modal"
+                                            style="z-index: 1; color:white; background-color: #212529;"
+                                            data-bs-toggle="modal"
                                             data-bs-target="#editProfileModal">
                                         Edit your profile
                                     </button>
@@ -86,9 +87,10 @@
                                     </div>
                                 {% elif seller_account.value == '1' %}
                                     <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                                            style="z-index: 1;" data-bs-toggle="modal"
+                                            style="z-index: 1; color:white; background-color: #212529;"
+                                            data-bs-toggle="modal"
                                             data-bs-target="#requestReviewModal">
-                                        Request a review
+                                        Request Review
                                     </button>
                                     <div class="modal fade" id="requestReviewModal" tabindex="-1"
                                          aria-labelledby="reviewRequestModalLabel" aria-hidden="true">
@@ -96,9 +98,9 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="reviewRequestModalLabel"
-                                                        style="color: black;">Request a Review</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
+                                                        style="color: white;>Request a Review</h5>
+                                                    <button type=" button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                                 </div>
                                                 <form class="row g-3" method="post" enctype="multipart/form-data">
                                                     <div class="modal-body">
@@ -141,13 +143,13 @@
                             <div class="d-flex justify-content-end text-center py-1">
                                 {% if show_profile_views.value == '1' %}
                                     <div>
-                                        <p class="mb-1 h5">253</p>
+                                        <p class="mb-1 h6">253</p>
                                         <p class="small text-muted mb-0">Profile Views</p>
                                     </div>
                                 {% endif %}
                                 {% if show_last_seen.value == '1' %}
                                     <div class="px-3">
-                                        <p class="mb-1 h5">{{ last_seen }}</p>
+                                        <p class="mb-1 h6">{{ last_seen }}</p>
                                         <p class="small text-muted mb-0">Last Seen</p>
                                     </div>
                                 {% endif %}

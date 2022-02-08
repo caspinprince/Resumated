@@ -4,12 +4,12 @@
         <div class="row text-center">
             {% for user in users.items %}
                 <div class="col-md-3 mb-5 mb-md-0" style="padding:20px;">
-                    <div class="card testimonial-card" style="border-radius: 5px;">
+                    <div class="card testimonial-card" style="border-radius: 10px;">
                         {% if user.value == '1' %}
-                            <span style="height: 20px; margin-bottom: -20px; border-radius: 5px 5px 0px 0px; z-index: 2"
+                            <span style="height: 20px; margin-bottom: -20px; border-radius: 10px 10px 0px 0px; z-index: 2"
                                   class="badge bg-warning text-dark">Reviewer</span>
                         {% endif %}
-                        <div class="card-up" style="background-color: #484e53; border-radius:5px 5px 0px 0px;"></div>
+                        <div class="card-up" style="background-color: #2e4d65; border-radius:10px 10px 0px 0px;"></div>
                         <div class="avatar mx-auto bg-white">
                             <a href={{ url_for('general.user', username=user.username) }}>
                                 <img
@@ -19,12 +19,12 @@
                             </a>
 
                         </div>
-                        <div class="card-body" style="border-radius: 5px;">
+                        <div class="card-body" style="border-radius: 10px;">
                             <h4><a class="profile-link" href={{ url_for('general.user', username=user.username) }}>
                                 {{ user.first_name }} {{ user.last_name }}
                             </a></h4>
                             <p class="profile-card-headline mb-4">
-                                <a class="profile-link"
+                                <a class="profile-headline-link"
                                    href={{ url_for('general.user', username=user.username) }}>{{ user.headline }}</a>
                             </p>
                             <hr/>
@@ -36,25 +36,26 @@
                 </div>
             {% endfor %}
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center" style="margin-top: 30px">
-                    <li class="page-item"><a class="page-link" style="color: #193453;"
+                <ul class="pagination justify-content-center" style="margin-top: 30px;">
+                    <li class="page-item"><a class="page-link background-color" style="color: #193453;"
                                              href="{{ url_for('general.home', page=users.prev_num) }}">Previous</a></li>
                     {% for page in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
                         {% if page %}
                             {% if page == users.page %}
-                                <li class="page-item active"><a class="page-link" style="background-color: #193453;"
+                                <li class="page-item active"><a class="page-link background-color"
+                                                                style="background-color: #193453;"
                                                                 href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
                                 </li>
                             {% else %}
-                                <li class="page-item"><a class="page-link" style="color: #193453;"
+                                <li class="page-item"><a class="page-link background-color" style="color: #193453;"
                                                          href="{{ url_for('general.home', page=page) }}">{{ page }}</a>
                                 </li>
                             {% endif %}
                         {% else %}
-                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                            <li class="page-item"><a class="page-link background-color">...</a></li>
                         {% endif %}
                     {% endfor %}
-                    <li class="page-item"><a class="page-link" style="color: #193453;"
+                    <li class="page-item"><a class="page-link background-color" style="color: #193453;"
                                              href="{{ url_for('general.home', page=users.next_num) }}">Next</a></li>
                 </ul>
             </nav>
