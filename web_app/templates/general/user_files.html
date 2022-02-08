@@ -15,12 +15,23 @@
     {% endfor %}
     <div class="container m-4">
         <h2>
-            {{ filter }}
+            {{ filter.replace("-", " ").title() }}
         </h2>
-        <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                data-bs-toggle="modal" data-bs-target="#uploadDocModal">
-            Upload
-        </button>
+        {% if file_list|length <= 5 %}
+            <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
+                    data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+                Upload
+            </button>
+        {% endif %}
+        <div class="container m-4">
+            <h5>Upload Limit</h5>
+            <div class="progress" style="height: 25px; border-radius: 25px">
+                <div class="progress-bar" role="progressbar" style="width: {{ 100*(file_list|length)/5 }}%;"
+                     aria-valuenow="{{ 100*(file_list|length)/5 }};" aria-valuemin="0"
+                     aria-valuemax="100">{{ file_list|length }}/5
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container">
         <table id="fileTable" class="table table-sm table-hover">
