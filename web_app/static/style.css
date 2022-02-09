@@ -167,7 +167,7 @@
 }
 
 .feature-card {
-    margin: 0px 10px;
+    margin: 0px 30px;
 }
 
 .feature-card-title {
@@ -214,3 +214,30 @@
     border-color: #eaecf1;
 }
 
+.big-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.medium-title {
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.small-title {
+    font-weight: 550;
+    font-size: 24px;
+}
+
+.green-text {
+    color: #1db34d;
+}
+
+.orange-text {
+    color: #ff8181;
+}
+
+.red-text {
+    color: #d01313;
+}
