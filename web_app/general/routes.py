@@ -63,15 +63,12 @@ def home(page=None):
             user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
             for user in users
         }
-        pfp_file = f"images/{current_user.pfp_id}.jpg"
-        pfp_url = generate_url(BUCKET, pfp_file)
 
         users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,
             pfp_links=pfp_links,
-            pfp_url=pfp_url,
             search_form=search_form,
         )
     else:
@@ -91,8 +88,6 @@ def user(username):
 
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
 
     user_pfp_file = f"images/{user.pfp_id}.jpg"
     user_pfp_url = generate_url(BUCKET, user_pfp_file)
@@ -151,7 +146,6 @@ def user(username):
         profile_form=profile_form,
         review_form=review_form,
         last_seen=last_seen,
-        pfp_url=pfp_url,
         show_profile_views=show_profile_views,
         show_last_seen=show_last_seen,
         user_pfp_url=user_pfp_url,
@@ -167,8 +161,6 @@ def user_files(username, filter):
 
     form = UploadDocForm(CombinedMultiDict((request.files, request.form)))
     user = User.query.filter_by(username=username).first_or_404()
-    pfp_file = f"images/{user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
     file_list = get_user_files(user.id, filter)
 
     if form.validate_on_submit():
@@ -196,7 +188,6 @@ def user_files(username, filter):
             url_for(
                 "general.user_files",
                 username=user.username,
-                pfp_url=pfp_url,
                 filter="my-files",
             )
         )
@@ -204,7 +195,6 @@ def user_files(username, filter):
     return render_template(
         "general/user_files.html",
         user=user,
-        pfp_url=pfp_url,
         form=form,
         file_list=file_list,
         filter=filter,
@@ -216,8 +206,6 @@ def user_files(username, filter):
 def document(user_id, filename):
     form = ReviewForm(request.form)
     user = User.query.filter_by(id=user_id).first()
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
 
     owner = int(user_id) == current_user.id
     file = File.query.filter_by(filename=filename, user_id=user_id).first()
@@ -242,7 +230,6 @@ def document(user_id, filename):
             url_for(
                 "general.user_files",
                 username=current_user.username,
-                pfp_url=pfp_url,
                 filter="my-files",
             )
         )
@@ -260,7 +247,6 @@ def document(user_id, filename):
         file_url=urllib.parse.quote(
             generate_url(BUCKET, f"documents/{user.pfp_id}{filename}")
         ),
-        pfp_url=pfp_url,
         form=form,
         owner=owner,
         feedback_data=feedback_data,
@@ -273,8 +259,6 @@ def document(user_id, filename):
 def settings():
     form = SettingsForm(request.form)
     user = User.query.filter_by(id=current_user.id).first()
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
 
     if form.validate_on_submit():
         for setting in form:
@@ -290,7 +274,7 @@ def settings():
 
         db.session.commit()
         return redirect(
-            url_for("general.user", username=user.username, pfp_url=pfp_url)
+            url_for("general.user", username=user.username)
         )
 
     elif request.method == "GET":
@@ -317,27 +301,21 @@ def settings():
             data_map[show_last_seen.value] if show_last_seen is not None else True
         )
 
-    return render_template("general/settings.html", pfp_url=pfp_url, form=form)
+    return render_template("general/settings.html", form=form)
 
 
 @bp.route("/requests/<type>", methods=["GET", "POST"])
 @login_required
 def requests(type):
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
-
     request_list = get_requests(current_user.id, type)
     return render_template(
-        "general/requests.html", type=type, pfp_url=pfp_url, request_list=request_list
+        "general/requests.html", type=type, request_list=request_list
     )
 
 
 @bp.route("/delete/<int:file_id>/<delete_or_archive>", methods=["POST"])
 @login_required
 def delete(file_id, delete_or_archive):
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
-
     if current_user.id == File.query.filter_by(id=file_id).first().user_id:
         if delete_or_archive == "del":
             file = File.query.filter_by(id=file_id).first()
@@ -350,7 +328,6 @@ def delete(file_id, delete_or_archive):
         url_for(
             "general.user_files",
             username=current_user.username,
-            pfp_url=pfp_url,
             filter="my-files",
         )
     )
@@ -359,9 +336,6 @@ def delete(file_id, delete_or_archive):
 @bp.route("/accept/<int:file_id>/<accepted_or_declined>", methods=["POST"])
 @login_required
 def accept(file_id, accepted_or_declined):
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
-
     FileAssociation.query.filter_by(file_id=file_id, user_id=current_user.id).update(
         {FileAssociation.request_status: accepted_or_declined}
     )
@@ -381,12 +355,15 @@ def before_request():
 @bp.context_processor
 def current_user_info():
     if current_user.is_authenticated:
+        pfp_file = f"images/{current_user.pfp_id}.jpg"
+        pfp_url = generate_url(BUCKET, pfp_file)
         return {
             "account_type": Settings.query.filter_by(
                 user_id=current_user.id, key="seller_account"
             )
             .first()
-            .value
+            .value,
+            "pfp_url": pfp_url
         }
     else:
         return {}
@@ -394,16 +371,12 @@ def current_user_info():
 
 @bp.app_errorhandler(404)
 def not_found_error(error):
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
-    return render_template('general/404.html', pfp_url=pfp_url), 404
+    return render_template('general/404.html'), 404
 
 
 @bp.app_errorhandler(500)
 def internal_error(error):
-    pfp_file = f"images/{current_user.pfp_id}.jpg"
-    pfp_url = generate_url(BUCKET, pfp_file)
     db.session.rollback()
-    return render_template('general/500.html', pfp_url=pfp_url), 500
+    return render_template('general/500.html'), 500
 
 
