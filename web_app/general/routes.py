@@ -54,7 +54,6 @@ def home(page=None):
 
         if search_form.validate_on_submit():
             search = search_form.search.data
-            print(search)
             users = users.filter(
                 (func.lower(User.first_name).like(func.lower(f"%{search}%")))
                 | func.lower(User.last_name).like(func.lower(f"%{search}%"))
@@ -67,8 +66,7 @@ def home(page=None):
         pfp_file = f"images/{current_user.pfp_id}.jpg"
         pfp_url = generate_url(BUCKET, pfp_file)
 
-        users = users.paginate(page, 1, True)
-        print(users)
+        users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,
@@ -192,8 +190,8 @@ def user_files(username, filter):
                 current_user.files.append(assoc)
                 db.session.add(current_user)
             db.session.commit()
-        except Exception as e:
-            print(e)
+        except:
+            pass
         return redirect(
             url_for(
                 "general.user_files",
@@ -382,7 +380,6 @@ def before_request():
 
 @bp.context_processor
 def current_user_info():
-    print(current_user.is_authenticated)
     if current_user.is_authenticated:
         return {
             "account_type": Settings.query.filter_by(
@@ -393,3 +390,20 @@ def current_user_info():
         }
     else:
         return {}
+
+
+@bp.app_errorhandler(404)
+def not_found_error(error):
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    return render_template('general/404.html', pfp_url=pfp_url), 404
+
+
+@bp.app_errorhandler(500)
+def internal_error(error):
+    pfp_file = f"images/{current_user.pfp_id}.jpg"
+    pfp_url = generate_url(BUCKET, pfp_file)
+    db.session.rollback()
+    return render_template('general/500.html', pfp_url=pfp_url), 500
+
+

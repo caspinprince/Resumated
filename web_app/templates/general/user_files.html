@@ -13,42 +13,83 @@
             </div>
         {% endfor %}
     {% endfor %}
-    <div class="container m-4">
-        <h2>
-            {{ filter.replace("-", " ").title() }}
-        </h2>
-        {% if file_list|length <= 5 %}
-            <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                    data-bs-toggle="modal" data-bs-target="#uploadDocModal">
-                Upload
-            </button>
-        {% endif %}
-        <div class="container m-4">
-            <h5>Upload Limit</h5>
-            <div class="progress" style="height: 25px; border-radius: 25px">
-                <div class="progress-bar" role="progressbar" style="width: {{ 100*(file_list|length)/5 }}%;"
-                     aria-valuenow="{{ 100*(file_list|length)/5 }};" aria-valuemin="0"
-                     aria-valuemax="100">{{ file_list|length }}/5
+    <div class="container mb-4">
+        <div class="d-flex flex-row align-items-center" style="justify-content: space-between; margin-bottom: 50px;">
+            <div class="medium-title">Documents</div>
+            <div>
+                <div class="d-flex align-items-center">
+                    {% if (file_list|length)/5 <= 0.5 %}
+                        <div class="fw-bold me-4 green-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% elif (file_list|length)/5 <= 0.8 %}
+                        <div class="fw-bold me-4 orange-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% else %}
+                        <div class="fw-bold me-4 red-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% endif %}
+                    <div class="progress me-auto"
+                         style="height: 20px; border-radius: 25px; width: 35vw; background-color: #cecece;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ 100*(file_list|length)/5 }}%;"
+                             aria-valuenow="{{ 100*(file_list|length)/5 }};" aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div>
+                {% if file_list|length < 5 %}
+                    <button type="button" class="btn btn-theme big-btn" data-mdb-ripple-color="dark"
+                            data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-cloud-upload" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"/>
+                            <path fill-rule="evenodd"
+                                  d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                        </svg>
+                        Upload File
+                    </button>
+                {% else %}
+                    <button type="button" class="btn btn-theme big-btn" data-mdb-ripple-color="dark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-cloud-upload" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"/>
+                            <path fill-rule="evenodd"
+                                  d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                        </svg>
+                        Upload File
+                    </button>
+                {% endif %}
+            </div>
         </div>
+
+        <div class="small-title">
+            {{ filter.replace("-", " ").title() }}
+        </div>
+
     </div>
     <div class="container">
-        <table id="fileTable" class="table table-sm table-hover">
-            <thead>
+        <table id="fileTable" class="table table-hover" style="border-width: 0;">
+            <thead style="border-width: 0;">
             <tr>
-                <th class="th-sm" scope="col">Name</th>
-                <th class="th-sm" scope="col">Owner</th>
-                <th class="th-sm" scope="col">Last Modified</th>
+                <th class="th-sm text-muted" style="padding-left: 0;" scope="col">Name</th>
+                <th class="th-sm text-muted" scope="col">Owner</th>
+                <th class="th-sm text-muted" scope="col">Last Modified</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody style="border-width: 0px">
             {% for file in file_list %}
                 <tr>
-                    <th scope="row"><a class="btn" href={{ url_for('general.document', user_id = file['owner_id'],
-                    filename=file['filename']) }}>{{ file['filename'] }}</a></th>
+                    <th scope="row">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#d01313"
+                             class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.6 11.85H0v3.999h.791v-1.342h.803c.287 0 .531-.057.732-.173.203-.117.358-.275.463-.474a1.42 1.42 0 0 0 .161-.677c0-.25-.053-.476-.158-.677a1.176 1.176 0 0 0-.46-.477c-.2-.12-.443-.179-.732-.179Zm.545 1.333a.795.795 0 0 1-.085.38.574.574 0 0 1-.238.241.794.794 0 0 1-.375.082H.788V12.48h.66c.218 0 .389.06.512.181.123.122.185.296.185.522Zm1.217-1.333v3.999h1.46c.401 0 .734-.08.998-.237a1.45 1.45 0 0 0 .595-.689c.13-.3.196-.662.196-1.084 0-.42-.065-.778-.196-1.075a1.426 1.426 0 0 0-.589-.68c-.264-.156-.599-.234-1.005-.234H3.362Zm.791.645h.563c.248 0 .45.05.609.152a.89.89 0 0 1 .354.454c.079.201.118.452.118.753a2.3 2.3 0 0 1-.068.592 1.14 1.14 0 0 1-.196.422.8.8 0 0 1-.334.252 1.298 1.298 0 0 1-.483.082h-.563v-2.707Zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638H7.896Z"/>
+                        </svg>
+                        <a class="btn pt-3 pb-3" href={{ url_for('general.document', user_id = file['owner_id'],
+                    filename=file['filename']) }}>{{ file['filename'] }}</a>
+                    </th>
                     <td class="align-middle">{{ file['owner'] }}</td>
-                    <td class="align-middle">{{ file['last_modified'] }}</td>
+                    <td class="align-middle">{{ moment(file['last_modified']).calendar() }}</td>
                     <form method="post"
                           action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="arch") }}">
                         <td class="align-middle"><input class="btn" type="submit" name="archive" value="Archive"></td>
@@ -84,7 +125,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        {{ form.submit(class="btn btn-primary") }}
+                        {{ form.submit(class="btn btn-theme") }}
                     </div>
                 </form>
             </div>

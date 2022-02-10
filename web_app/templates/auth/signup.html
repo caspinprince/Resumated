@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <div class="container h-100">
+    <div class="container h-100 mb-5">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                 <div class="card shadow-2-strong" style="border-radius: 1rem;">
@@ -11,6 +11,14 @@
 
                         <form method="post">
                             {{ form.hidden_tag() }}
+                            <div class="row form-outline mb-4">
+                                <div class="col">
+                                    {{ form.first_name(class="form-control form-control-lg", placeholder="First Name") }}
+                                </div>
+                                <div class="col">
+                                    {{ form.last_name(class="form-control form-control-lg", placeholder="Last Name") }}
+                                </div>
+                            </div>
                             <div class="form-outline mb-4">
                                 {{ form.email(class="form-control form-control-lg", placeholder="Email Address") }}
 
@@ -19,13 +27,6 @@
                                         {{ error }}
                                     </div>
                                 {% endfor %}
-                            </div>
-
-                            <div class="form-outline mb-4">
-                                {{ form.first_name(class="form-control form-control-lg", placeholder="First Name") }}
-                            </div>
-                            <div class="form-outline mb-4">
-                                {{ form.last_name(class="form-control form-control-lg", placeholder="Last Name") }}
                             </div>
                             <div class="form-outline mb-4">
                                 {{ form.username(class="form-control form-control-lg", placeholder="Username") }}
@@ -44,15 +45,14 @@
                                 {{ form.password_conf(class="form-control form-control-lg", placeholder="Confirm your password") }}
                             </div>
 
-                            {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
-                            <div class="divider d-flex align-items-center my-4">
+                            {{ form.submit(class="btn btn-theme btn-lg btn-block") }}
+                            <div class="divider d-flex align-items-center my-3">
                                 <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
                             </div>
-                            <a class="btn btn-lg btn-google btn-block text-uppercase btn-outline"
+                            <a class="btn btn-lg btn-google btn-block btn-outline"
                                href="{{ url_for('auth.signup_google') }}" role="button">
                                 <img src="https://img.icons8.com/color/16/000000/google-logo.png"> Sign Up with
                                 Google</a>
-
                         </form>
 
                     </div>

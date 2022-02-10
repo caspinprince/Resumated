@@ -109,7 +109,7 @@ def get_requests(user_id, type):
                 File.id,
                 File.filename,
                 FileAssociation.user_status,
-                FileAssociation.user_id,
+                File.user_id,
                 FileAssociation.request_status,
             )
             .outerjoin(FileAssociation, File.id == FileAssociation.file_id)

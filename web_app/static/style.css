@@ -24,7 +24,7 @@
 }
 
 .testimonial-card .avatar {
-    width: 110px;
+    width: 170px;
     margin-top: -60px;
     overflow: hidden;
     border: 3px solid #fff;
@@ -33,6 +33,7 @@
 
 .profile-link {
     color: black;
+    font-weight: 500;
 }
 
 .profile-link:link {
@@ -46,8 +47,6 @@
 }
 
 .profile-card-headline {
-    color: gray;
-    font-weight: 350;
     display: block;
     line-height: 1.5rem !important;
     max-height: 3rem;
@@ -57,6 +56,18 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+}
+
+.profile-headline-link {
+    color: #444444;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.profile-headline-link:hover {
+    color: #444444;
+    text-decoration: underline;
+    font-weight: 500;
 }
 
 .profile-card-about-me {
@@ -69,6 +80,8 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+    font-weight: 400;
+    color: #616161;
 }
 
 .pfp {
@@ -97,7 +110,7 @@
 
 .home-section-wrapper {
     width: 100%;
-    background-color: #224e7f;
+    background-color: #193453;
     text-align: center;
     padding-top: 130px;
     align-content: center;
@@ -135,7 +148,7 @@
 }
 
 .section-pre-header {
-    color: #224e7f;
+    color: #193453;
     font-size: 18px;
     font-weight: 600;
 }
@@ -154,7 +167,7 @@
 }
 
 .feature-card {
-    margin: 0px 10px;
+    margin: 0px 30px;
 }
 
 .feature-card-title {
@@ -162,4 +175,79 @@
     font-size: 24px;
     padding-top: 25px;
     padding-bottom: 10px;
+}
+
+.error-code {
+    font-weight: 650;
+    font-size: 135px;
+    line-height: 1.2;
+    color: #193453;
+    margin: 0 auto 0 auto;
+    width: fit-content;
+    height:fit-content;
+}
+
+.error-title {
+    font-weight: 600;
+    font-size: 65px;
+    line-height: 1.2;
+    color: #193453;
+    margin: 0 auto 0 auto;
+    width: fit-content;
+    height:fit-content;
+}
+
+.error-subtitle {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    color: black;
+    margin: auto;
+    width: fit-content;
+    height:fit-content;
+}
+
+.btn-theme {
+    color: #fff;
+    background-color: #193453;
+    border-color: #193453;
+}
+
+.btn-theme:hover{
+    color: #FFF;
+    background-color: #1f446f;
+    border-color: #1f446f;
+}
+
+.background-color{
+    background-color: #eaecf1;
+    border-color: #eaecf1;
+}
+
+.big-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.medium-title {
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.small-title {
+    font-weight: 550;
+    font-size: 24px;
+}
+
+.green-text {
+    color: #1db34d;
+}
+
+.orange-text {
+    color: #ff8181;
+}
+
+.red-text {
+    color: #d01313;
 }
