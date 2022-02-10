@@ -13,6 +13,7 @@ migrate = Migrate(compare_type=True)
 
 from web_app import models
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)

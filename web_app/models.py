@@ -14,8 +14,7 @@ def load_user(user_id):
 
 class FileAssociation(db.Model):
     __tablename__ = "FileAssociation"
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "User_Info.id"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey("File.id"), primary_key=True)
     user_status = db.Column(db.String(50), nullable=False)
     request_status = db.Column(db.String(25), nullable=True)
@@ -33,8 +32,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(64), unique=True, index=True)
     email = db.Column(db.String(100), unique=True, index=True)
     password_hash = db.Column(db.String(128), nullable=True)
-    google_id = db.Column(db.String(64), unique=True,
-                          index=True, nullable=True)
+    google_id = db.Column(db.String(64), unique=True, index=True, nullable=True)
     about_me = db.Column(db.String(1000), default="")
     headline = db.Column(db.String(250), default="")
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
@@ -65,8 +63,7 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "User_Info.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), nullable=False)
     users = db.relationship(
         FileAssociation, back_populates="file", cascade="all, delete-orphan"
     )
@@ -81,14 +78,12 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "User_Info.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), nullable=False)
 
 
 class Feedback(db.Model):
     __tablename__ = "Feedback"
     id = db.Column(db.Integer, primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey("File.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "User_Info.id"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), primary_key=True)
     feedback = db.Column(db.String(10000), nullable=False)

@@ -18,8 +18,7 @@ class LoginForm(FlaskForm):
     def validate_password(self, field):
         user = User.query.filter_by(email=self.email.data).first()
         if user is not None and (
-            user.password_hash is None or not user.password_check(
-                password=field.data)
+            user.password_hash is None or not user.password_check(password=field.data)
         ):
             raise ValidationError("Incorrect password!")
 
@@ -37,8 +36,7 @@ class RegistrationForm(FlaskForm):
             Length(min=8, max=20, message="Password must have length 8-20!"),
         ],
     )
-    password_conf = PasswordField(
-        "Confirm Password", validators=[DataRequired()])
+    password_conf = PasswordField("Confirm Password", validators=[DataRequired()])
     submit = SubmitField("Sign Up")
 
     def validate_email(self, email):

@@ -11,8 +11,7 @@ default_settings = {
 def init_settings(user_id):
     for setting in default_settings:
         db.session.add(
-            Settings(
-                key=setting, value=default_settings[setting], user_id=user_id)
+            Settings(key=setting, value=default_settings[setting], user_id=user_id)
         )
 
     db.session.commit()
