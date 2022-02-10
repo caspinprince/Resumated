@@ -29,7 +29,8 @@ def upgrade():
         sa.Column("google_id", sa.String(length=64), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_User_Info_email"), "User_Info", ["email"], unique=True)
+    op.create_index(op.f("ix_User_Info_email"),
+                    "User_Info", ["email"], unique=True)
     op.create_index(
         op.f("ix_User_Info_google_id"), "User_Info", ["google_id"], unique=True
     )

@@ -10,6 +10,7 @@ login_manager.login_view = "auth.login"
 db = SQLAlchemy()
 moment = Moment()
 migrate = Migrate(compare_type=True)
+
 from web_app import models
 
 
