@@ -10,7 +10,11 @@
             <thead>
             <tr>
                 <th class="th-sm" scope="col">File Name</th>
-                <th class="th-sm" scope="col">Reviewer</th>
+                {% if type == 'sent' %}
+                    <th class="th-sm" scope="col">Reviewer</th>
+                {% else %}
+                    <th class="th-sm" scope="col">User</th>
+                {% endif %}
                 <th class="th-sm" scope="col">Status</th>
             </tr>
             </thead>
