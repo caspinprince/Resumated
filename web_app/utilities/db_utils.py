@@ -123,6 +123,7 @@ def get_requests(user_id, type):
                 "filename": file.filename,
                 "reviewer": User.query.filter_by(id=file.user_id).first().username,
                 "status": file.request_status,
+                "owner_id": File.query.filter_by(id=file.id).first().user_id,
                 "file_id": file.id,
             }
             for file in file_assoc
