@@ -21,7 +21,8 @@ def upgrade():
     op.create_foreign_key(None, "Feedback", "User_Info", ["user_id"], ["id"])
     op.create_foreign_key(None, "File", "User_Info", ["user_id"], ["id"])
     op.add_column(
-        "FileAssociation", sa.Column("requests", sa.String(length=2000), nullable=True)
+        "FileAssociation", sa.Column(
+            "requests", sa.String(length=2000), nullable=True)
     )
     # ### end Alembic commands ###
 

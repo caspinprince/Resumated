@@ -78,7 +78,8 @@ def home(page=None):
 @bp.route("/user/<username>", methods=["GET", "POST"])
 @login_required
 def user(username):
-    profile_form = EditProfileForm(CombinedMultiDict((request.files, request.form)))
+    profile_form = EditProfileForm(
+        CombinedMultiDict((request.files, request.form)))
 
     review_form = RequestReviewForm(request.form)
     review_form.document.choices = [
@@ -107,7 +108,8 @@ def user(username):
             try:
                 img = request.files["profile_pic"]
                 content_type = request.mimetype
-                upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+                upload_pfp_to_s3(
+                    img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
             except:
                 pass
 
@@ -171,7 +173,8 @@ def user_files(username, filter):
             upload_doc_to_s3(
                 doc, BUCKET, f"documents/{user.pfp_id}{filename}", content_type
             )
-            check = File.query.filter_by(filename=filename, user_id=user.id).first()
+            check = File.query.filter_by(
+                filename=filename, user_id=user.id).first()
             if check is not None:
                 check.last_modified = datetime.utcnow()
             else:
@@ -210,7 +213,8 @@ def document(user_id, filename):
     owner = int(user_id) == current_user.id
     file = File.query.filter_by(filename=filename, user_id=user_id).first()
     requests = (
-        FileAssociation.query.filter_by(file_id=file.id, user_id=current_user.id)
+        FileAssociation.query.filter_by(
+            file_id=file.id, user_id=current_user.id)
         .first()
         .requests
     )
@@ -264,10 +268,12 @@ def settings():
         for setting in form:
             if setting.name == "save" or setting.name == "csrf_token":
                 continue
-            query = Settings.query.filter_by(user_id=user.id, key=setting.name).first()
+            query = Settings.query.filter_by(
+                user_id=user.id, key=setting.name).first()
             if query is None:
                 db.session.add(
-                    Settings(key=setting.name, value=setting.data, user_id=user.id)
+                    Settings(key=setting.name,
+                             value=setting.data, user_id=user.id)
                 )
             else:
                 query.value = setting.data
@@ -320,9 +326,11 @@ def delete(file_id, delete_or_archive):
         if delete_or_archive == "del":
             file = File.query.filter_by(id=file_id).first()
             db.session.delete(file)
-            delete_object_s3(BUCKET, f"documents/{current_user.pfp_id}{file.filename}")
+            delete_object_s3(
+                BUCKET, f"documents/{current_user.pfp_id}{file.filename}")
         else:
-            File.query.filter_by(id=file_id).update({File.file_status: "archived"})
+            File.query.filter_by(id=file_id).update(
+                {File.file_status: "archived"})
         db.session.commit()
     return redirect(
         url_for(
@@ -347,7 +355,8 @@ def accept(file_id, accepted_or_declined):
 @bp.before_request
 def before_request():
     if current_user.is_authenticated:
-        user = User.query.filter_by(username=current_user.username).first_or_404()
+        user = User.query.filter_by(
+            username=current_user.username).first_or_404()
         user.last_online = datetime.utcnow()
         db.session.commit()
 
@@ -378,5 +387,3 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('general/500.html'), 500
-
-

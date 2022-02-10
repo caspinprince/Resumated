@@ -1,3 +1,4 @@
+from web_app import models
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -10,7 +11,6 @@ login_manager.login_view = "auth.login"
 db = SQLAlchemy()
 moment = Moment()
 migrate = Migrate(compare_type=True)
-from web_app import models
 
 
 def create_app(config_class=Config):
@@ -32,6 +32,3 @@ def create_app(config_class=Config):
 
     app.register_blueprint(google_bp, url_prefix="/signup_google")
     return app
-
-
-from web_app import models
