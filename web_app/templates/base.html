@@ -30,7 +30,13 @@
                 {% if account_type == '1' %}
                     <div class="dropdown">
                         <a id="navbar" class="btn me-2" style="color: #193453" data-bs-toggle="dropdown"
-                           aria-expanded="false">Requests</a>
+                           aria-expanded="false">Requests
+                            {% if pending_reviews > 0 %}
+                                <span class="position-absolute top-20 start-80 translate-middle badge rounded-pill bg-danger">
+                                    {{ pending_reviews }}
+                                </span>
+                            {% endif %}
+                        </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" style="margin-top: 10px">
                             <li>
                                 <a href={{ url_for('general.requests', type='received') }} class="dropdown-item">Received</a>
@@ -41,7 +47,8 @@
                         </ul>
                     </div>
                 {% else %}
-                    <a href="{{ url_for('general.requests', type='sent') }}" class="btn me-2" style="color: #193453;">Requests</a>
+                    <a class="position-relative btn me-2" href="{{ url_for('general.requests', type='sent') }}" style="color: #193453;">Requests
+                    </a>
                 {% endif %}
                 <div class="dropdown">
                     <a id="navbar" class="btn me-2" style="color: #193453;" data-bs-toggle="dropdown"

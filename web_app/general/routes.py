@@ -355,6 +355,7 @@ def current_user_info():
     if current_user.is_authenticated:
         pfp_file = f"images/{current_user.pfp_id}.jpg"
         pfp_url = generate_url(BUCKET, pfp_file)
+        pending_reviews = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
         return {
             "account_type": Settings.query.filter_by(
                 user_id=current_user.id, key="seller_account"
@@ -362,6 +363,7 @@ def current_user_info():
             .first()
             .value,
             "pfp_url": pfp_url,
+            "pending_reviews": pending_reviews
         }
     else:
         return {}
