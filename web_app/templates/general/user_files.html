@@ -33,7 +33,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <div>
                 {% if file_list|length < 5 %}
@@ -90,7 +89,7 @@
                     filename=file['filename']) }}>{{ file['filename'] }}</a>
                     </th>
                     <td class="align-middle">{{ file['owner'] }}</td>
-                    <td class="align-middle">{{ file['last_modified'] }}</td>
+                    <td class="align-middle">{{ moment(file['last_modified']).calendar() }}</td>
                     <form method="post"
                           action="{{ url_for('general.delete', file_id=file['file_id'], delete_or_archive="arch") }}">
                         <td class="align-middle"><input class="btn" type="submit" name="archive" value="Archive"></td>

@@ -2,12 +2,13 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_moment import Moment
 from config import Config
 
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 db = SQLAlchemy()
+moment = Moment()
 migrate = Migrate(compare_type=True)
 from web_app import models
 
@@ -18,7 +19,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-
+    moment.init_app(app)
     from web_app.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
