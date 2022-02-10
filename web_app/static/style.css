@@ -177,12 +177,22 @@
     padding-bottom: 10px;
 }
 
+.error-code {
+    font-weight: 650;
+    font-size: 135px;
+    line-height: 1.2;
+    color: #193453;
+    margin: 0 auto 0 auto;
+    width: fit-content;
+    height:fit-content;
+}
+
 .error-title {
     font-weight: 600;
     font-size: 65px;
     line-height: 1.2;
     color: #193453;
-    margin: 30vh auto 25px auto;
+    margin: 0 auto 0 auto;
     width: fit-content;
     height:fit-content;
 }

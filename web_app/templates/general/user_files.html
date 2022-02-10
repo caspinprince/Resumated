@@ -18,8 +18,13 @@
             <div class="medium-title">Documents</div>
             <div>
                 <div class="d-flex align-items-center">
-                    <div class="fw-bold me-4 red-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored
-                    </div>
+                    {% if (file_list|length)/5 <= 0.5 %}
+                        <div class="fw-bold me-4 green-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% elif (file_list|length)/5 <= 0.8 %}
+                        <div class="fw-bold me-4 orange-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% else %}
+                        <div class="fw-bold me-4 red-text" style="font-size: 18px;">{{ file_list|length }}/5 Files Stored</div>
+                    {% endif %}
                     <div class="progress me-auto"
                          style="height: 20px; border-radius: 25px; width: 35vw; background-color: #cecece;">
                         <div class="progress-bar" role="progressbar" style="width: {{ 100*(file_list|length)/5 }}%;"

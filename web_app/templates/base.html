@@ -10,8 +10,9 @@
 </head>
 <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #eaecf1; height: 100px;">
     <div class="container">
-        <div class="d-flex">
-            <a class="navbar-brand" style="font-size: 22px; font-weight: 600; color: #193453;"
+        <div class="d-flex align-items-center">
+            <img src="/static/demo.svg" style="width: 25px; height: 35px;">
+            <a class="navbar-brand ms-2" style="font-size: 28px; font-weight: 600; color: #193453;"
                href="{{ url_for('general.home') }}">Rezumated</a>
             {% if current_user.is_authenticated and request.endpoint == 'general.home' %}
                 <form class="d-flex" style="display: block; margin: auto 0 auto 25px; height: 35px;" method="post"
