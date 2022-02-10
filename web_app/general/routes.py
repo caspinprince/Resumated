@@ -66,7 +66,7 @@ def home(page=None):
         pfp_file = f"images/{current_user.pfp_id}.jpg"
         pfp_url = generate_url(BUCKET, pfp_file)
 
-        users = users.paginate(page, 1, True)
+        users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,
