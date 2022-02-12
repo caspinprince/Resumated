@@ -12,8 +12,10 @@
                 <th class="th-sm text-muted" scope="col">File Name</th>
                 {% if type == 'sent' %}
                     <th class="th-sm text-muted" scope="col">Reviewer</th>
+                    <th class="th-sm text-muted" scope="col">Sent</th>
                 {% else %}
                     <th class="th-sm text-muted" scope="col">User</th>
+                    <th class="th-sm text-muted" scope="col">Received</th>
                 {% endif %}
                 <th class="th-sm text-muted" scope="col">Status</th>
             </tr>
@@ -47,6 +49,7 @@
                         </th>
                     {% endif %}
                     <td class="align-middle">{{ file['reviewer'] }}</td>
+                    <td class="align-middle">{{ moment(file['timestamp']).calendar() }}</td>
                     <td class="align-middle">{{ file['status'] }}</td>
                     {% if type == 'received' and file['status'] == 'pending' %}
                         <form method="post"

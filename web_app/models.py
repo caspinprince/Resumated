@@ -21,6 +21,7 @@ class FileAssociation(db.Model):
     requests = db.Column(db.String(2000), nullable=True)
     user = db.relationship("User", back_populates="files")
     file = db.relationship("File", back_populates="users")
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class User(db.Model, UserMixin):
