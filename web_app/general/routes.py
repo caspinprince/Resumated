@@ -95,8 +95,8 @@ def user(username):
         user_id=user.id, key="seller_account"
     ).first()
 
-    show_profile_views = Settings.query.filter_by(
-        user_id=user.id, key="show_profile_views"
+    show_join_date = Settings.query.filter_by(
+        user_id=user.id, key="show_join_date"
     ).first()
     show_last_seen = Settings.query.filter_by(
         user_id=user.id, key="show_last_seen"
@@ -146,7 +146,7 @@ def user(username):
         profile_form=profile_form,
         review_form=review_form,
         last_seen=last_seen,
-        show_profile_views=show_profile_views,
+        show_join_date=show_join_date,
         show_last_seen=show_last_seen,
         user_pfp_url=user_pfp_url,
         seller_account=seller_account,
@@ -279,8 +279,8 @@ def settings():
         seller_account = Settings.query.filter_by(
             user_id=current_user.id, key="seller_account"
         ).first()
-        show_profile_views = Settings.query.filter_by(
-            user_id=current_user.id, key="show_profile_views"
+        show_join_date = Settings.query.filter_by(
+            user_id=current_user.id, key="show_join_date"
         ).first()
         show_last_seen = Settings.query.filter_by(
             user_id=current_user.id, key="show_last_seen"
@@ -290,9 +290,9 @@ def settings():
         form.seller_account.data = (
             data_map[seller_account.value] if seller_account is not None else False
         )
-        form.show_profile_views.data = (
-            data_map[show_profile_views.value]
-            if show_profile_views is not None
+        form.show_join_date.data = (
+            data_map[show_join_date.value]
+            if show_join_date is not None
             else True
         )
         form.show_last_seen.data = (

@@ -141,16 +141,16 @@
                         </div>
                         <div class="p-4 text-black" style="background-color: #f8f9fa;">
                             <div class="d-flex justify-content-end text-center py-1">
-                                {% if show_profile_views.value == '1' %}
-                                    <div>
-                                        <p class="mb-1 h6">253</p>
-                                        <p class="small text-muted mb-0">Profile Views</p>
-                                    </div>
-                                {% endif %}
                                 {% if show_last_seen.value == '1' %}
                                     <div class="px-3">
                                         <p class="mb-1 h6">{{ last_seen }}</p>
                                         <p class="small text-muted mb-0">Last Seen</p>
+                                    </div>
+                                {% endif %}
+                                {% if show_join_date.value == '1' %}
+                                    <div>
+                                        <p class="mb-1 h6">{{ moment(user.joined).fromNow() }}</p>
+                                        <p class="small text-muted mb-0">Member Since</p>
                                     </div>
                                 {% endif %}
                             </div>

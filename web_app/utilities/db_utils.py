@@ -5,6 +5,7 @@ default_settings = {
     "seller_account": False,
     "show_profile_views": True,
     "show_last_seen": True,
+    "show_join_date": True
 }
 
 
