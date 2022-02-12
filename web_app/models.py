@@ -21,6 +21,7 @@ class FileAssociation(db.Model):
     requests = db.Column(db.String(2000), nullable=True)
     user = db.relationship("User", back_populates="files")
     file = db.relationship("File", back_populates="users")
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class User(db.Model, UserMixin):
@@ -35,6 +36,7 @@ class User(db.Model, UserMixin):
     google_id = db.Column(db.String(64), unique=True, index=True, nullable=True)
     about_me = db.Column(db.String(1000), default="")
     headline = db.Column(db.String(250), default="")
+    joined = db.Column(db.DateTime, default=datetime.utcnow)
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
     pfp_id = db.Column(db.String(50), unique=True)
     files = db.relationship(FileAssociation, back_populates="user")

@@ -1,5 +1,5 @@
 from flask import render_template, redirect, request, url_for, flash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 
 from web_app import db
 from web_app.auth import bp
@@ -18,6 +18,9 @@ def logout():
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("general.home"))
+
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -42,8 +45,10 @@ def signup_google():
 
 @bp.route("/signup", methods=["GET", "POST"])
 def signup():
-    form = RegistrationForm(request.form)
+    if current_user.is_authenticated:
+        return redirect(url_for("general.home"))
 
+    form = RegistrationForm(request.form)
     if form.validate_on_submit():
         user = User(
             email=form.email.data,

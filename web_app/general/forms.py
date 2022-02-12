@@ -48,8 +48,8 @@ class SettingsForm(FlaskForm):
         "Activate seller account functionalities",
         false_values=(False, "false", "False", "0", 0),
     )
-    show_profile_views = BooleanField(
-        "Show view count on profile page",
+    show_join_date = BooleanField(
+        "Show join date on profile page",
         false_values=(False, "false", "False", "0", 0),
     )
     show_last_seen = BooleanField(

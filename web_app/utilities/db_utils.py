@@ -5,6 +5,7 @@ default_settings = {
     "seller_account": False,
     "show_profile_views": True,
     "show_last_seen": True,
+    "show_join_date": True
 }
 
 
@@ -87,6 +88,7 @@ def get_requests(user_id, type):
                 FileAssociation.user_status,
                 FileAssociation.user_id,
                 FileAssociation.request_status,
+                FileAssociation.timestamp
             )
             .outerjoin(FileAssociation, File.id == FileAssociation.file_id)
             .filter(File.user_id == user_id, FileAssociation.user_status == "shared")
@@ -98,6 +100,7 @@ def get_requests(user_id, type):
                 "status": file.request_status,
                 "owner_id": File.query.filter_by(id=file.id).first().user_id,
                 "file_id": file.id,
+                "timestamp": file.timestamp
             }
             for file in file_assoc
         ]
@@ -111,6 +114,7 @@ def get_requests(user_id, type):
                 FileAssociation.user_status,
                 File.user_id,
                 FileAssociation.request_status,
+                FileAssociation.timestamp
             )
             .outerjoin(FileAssociation, File.id == FileAssociation.file_id)
             .filter(
@@ -123,7 +127,9 @@ def get_requests(user_id, type):
                 "filename": file.filename,
                 "reviewer": User.query.filter_by(id=file.user_id).first().username,
                 "status": file.request_status,
+                "owner_id": File.query.filter_by(id=file.id).first().user_id,
                 "file_id": file.id,
+                "timestamp": file.timestamp
             }
             for file in file_assoc
         ]
