@@ -22,7 +22,7 @@
             </thead>
             <tbody style="border-width: 0px">
             {% for file in request_list %}
-                <tr>
+                <tr class="align-items-center">
                     {% if type == 'sent' %}
                         <th scope="row">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#d01313"
@@ -52,16 +52,18 @@
                     <td class="align-middle">{{ moment(file['timestamp']).calendar() }}</td>
                     <td class="align-middle">{{ file['status'] }}</td>
                     {% if type == 'received' and file['status'] == 'pending' %}
-                        <form method="post"
-                              action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="accepted") }}">
-                            <td class="align-middle"><input class="btn btn-success" type="submit" name="archive"
-                                                            value="Accept"></td>
-                        </form>
-                        <form method="post"
-                              action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="declined") }}">
-                            <td class="align-middle"><input class="btn btn-danger" type="submit" name="delete"
-                                                            value="Decline"></td>
-                        </form>
+                        <td class="align-middle">
+                            <form class="d-inline align-middle" method="post"
+                                  action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="accepted") }}">
+                                <input class="align-middle btn btn-outline-success" type="submit" name="archive"
+                                       value="Accept">
+                            </form>
+                            <form class="d-inline align-middle" method="post"
+                                  action="{{ url_for('general.accept', file_id=file['file_id'], accepted_or_declined="declined") }}">
+                                <input class="align-self-center btn btn-outline-danger" type="submit" name="delete"
+                                       value="Decline">
+                            </form>
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}
