@@ -342,6 +342,11 @@ def accept(file_id, accepted_or_declined):
     return redirect(url_for("general.requests", type="received"))
 
 
+@bp.route("/privacy", methods=["GET"])
+def privacy():
+    return render_template("general/privacy.html")
+
+
 @bp.before_request
 def before_request():
     if current_user.is_authenticated:
