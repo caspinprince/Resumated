@@ -9,9 +9,9 @@
                         <div class="card-body">
                             <h2 class="card-title" style="margin: 25px 0 25px 18px">User Settings</h2>
                             <hr>
-                            <form class="row g-3" method="post" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
-                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                            <div class="accordion accordion-flush" id="accordionFlushExample">
+                                <form method="post" enctype="multipart/form-data">
+                                    {{ form.hidden_tag() }}
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="flush-headingOne">
                                             <button class="accordion-button collapsed" type="button"
@@ -48,9 +48,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{ form.save(class="btn btn-theme", style="margin: 25px 0 25px 18px") }}
-                                </div>
-                            </form>
+                                    {{ form.save(class="btn btn-theme", style="margin: 25px 15px 25px 18px") }}
+                                </form>
+                                <form method="post" action="{{ url_for('general.delete_user') }}" style="margin: 0px 15px 25px 18px">
+                                    <td><input class="btn btn-danger" type="submit" name="deleteuser" value="Delete Account"></td>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

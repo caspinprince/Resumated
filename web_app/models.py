@@ -14,8 +14,8 @@ def load_user(user_id):
 
 class FileAssociation(db.Model):
     __tablename__ = "FileAssociation"
-    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), primary_key=True)
-    file_id = db.Column(db.Integer, db.ForeignKey("File.id"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), primary_key=True)
+    file_id = db.Column(db.Integer, db.ForeignKey("File.id", ondelete='CASCADE'), primary_key=True)
     user_status = db.Column(db.String(50), nullable=False)
     request_status = db.Column(db.String(25), nullable=True)
     requests = db.Column(db.String(2000), nullable=True)
@@ -39,8 +39,8 @@ class User(db.Model, UserMixin):
     joined = db.Column(db.DateTime, default=datetime.utcnow)
     last_online = db.Column(db.DateTime, default=datetime.utcnow)
     pfp_id = db.Column(db.String(50), unique=True)
-    files = db.relationship(FileAssociation, back_populates="user")
-    settings = db.relationship("Settings", lazy=True, backref="users")
+    files = db.relationship(FileAssociation, back_populates="user", cascade="all, delete-orphan")
+    settings = db.relationship("Settings", backref="users", cascade="all, delete-orphan")
 
     def __init__(
         self, first_name, last_name, email, username, password=None, google_id=None
@@ -65,7 +65,7 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(250), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), nullable=False)
     users = db.relationship(
         FileAssociation, back_populates="file", cascade="all, delete-orphan"
     )
@@ -80,12 +80,12 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), nullable=False)
 
 
 class Feedback(db.Model):
     __tablename__ = "Feedback"
     id = db.Column(db.Integer, primary_key=True)
-    file_id = db.Column(db.Integer, db.ForeignKey("File.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id"), primary_key=True)
+    file_id = db.Column(db.Integer, db.ForeignKey("File.id", ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), primary_key=True)
     feedback = db.Column(db.String(10000), nullable=False)
