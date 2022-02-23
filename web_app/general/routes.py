@@ -311,9 +311,9 @@ def requests(type):
     )
 
 
-@bp.route("/delete/<int:file_id>/<delete_or_archive>", methods=["POST"])
+@bp.route("/delete_file/<int:file_id>/<delete_or_archive>", methods=["POST"])
 @login_required
-def delete(file_id, delete_or_archive):
+def delete_file(file_id, delete_or_archive):
     if current_user.id == File.query.filter_by(id=file_id).first().user_id:
         if delete_or_archive == "del":
             file = File.query.filter_by(id=file_id).first()
@@ -345,6 +345,20 @@ def accept(file_id, accepted_or_declined):
 @bp.route("/privacy", methods=["GET"])
 def privacy():
     return render_template("general/privacy.html")
+
+
+@bp.route("/delete_user", methods=["POST"])
+@login_required
+def delete_user():
+    delete_object_s3(BUCKET, f"images/{current_user.pfp_id}.jpg")
+
+    files = File.query.filter_by(user_id=current_user.id)
+    for file in files:
+        delete_object_s3(BUCKET, f"documents/{current_user.pfp_id}{file.filename}")
+
+    User.query.filter_by(id=current_user.id).delete()
+    db.session.commit()
+    return redirect(url_for("general.home"))
 
 
 @bp.before_request
