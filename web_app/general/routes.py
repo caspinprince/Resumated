@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import render_template, redirect, request, url_for
 from flask_login import current_user, login_required
 from werkzeug.datastructures import CombinedMultiDict
-from web_app import db
+from web_app import db, cache
 from web_app.general import bp
 from sqlalchemy import func
 from web_app.general.forms import (
@@ -58,13 +58,17 @@ def home(page=None):
                 (func.lower(User.first_name).like(func.lower(f"%{search}%")))
                 | func.lower(User.last_name).like(func.lower(f"%{search}%"))
             )
+        pfp_links = {}
+        users = users.paginate(page, 12, True)
+        for user in users.items:
+            if cache.get(str(user.id)) is not None:
+                print('have in cache')
+                pfp_links[user.id] = cache.get(str(user.id))
+            else:
+                print('not in cache')
+                pfp_links[user.id] = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+                cache.set(str(user.id), pfp_links[user.id])
 
-        pfp_links = {
-            user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
-            for user in users
-        }
-
-        users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,

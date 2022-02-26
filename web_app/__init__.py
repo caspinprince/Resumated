@@ -3,6 +3,10 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
+from werkzeug.utils import import_string
+import werkzeug
+werkzeug.import_string = import_string
+from flask_caching import Cache
 from config import Config
 
 login_manager = LoginManager()
@@ -10,6 +14,7 @@ login_manager.login_view = "auth.login"
 db = SQLAlchemy()
 moment = Moment()
 migrate = Migrate(compare_type=True)
+cache = Cache()
 
 from web_app import models
 
@@ -21,6 +26,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     moment.init_app(app)
+    cache.init_app(app, config={'CACHE_TYPE': 'FileSystemCache', 'CACHE_THRESHOLD': 5000, 'CACHE_DIR': 'cache', "CACHE_DEFAULT_TIMEOUT": 3600})
     from web_app.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
