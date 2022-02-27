@@ -50,7 +50,7 @@ def generate_url(bucket_name, object_name):
     s3_client = session.client('s3', aws_access_key_id='AKIA4QN2U3BRYSBGFH53',
                         aws_secret_access_key='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', region_name='us-east-2', config=Config(signature_version='s3v4'))
     response = s3_client.generate_presigned_url(
-        "get_object", Params={"Bucket": bucket_name, "Key": object_name}, ExpiresIn=60
+        "get_object", Params={"Bucket": bucket_name, "Key": object_name}, ExpiresIn=86400
     )
     return response
 

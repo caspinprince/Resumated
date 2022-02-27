@@ -1,10 +1,10 @@
 import urllib.parse
 from datetime import datetime
 
-from flask import render_template, redirect, request, url_for
+from flask import render_template, redirect, request, url_for, session
 from flask_login import current_user, login_required
 from werkzeug.datastructures import CombinedMultiDict
-from web_app import db
+from web_app import db, cache
 from web_app.general import bp
 from sqlalchemy import func
 from web_app.general.forms import (
@@ -58,13 +58,15 @@ def home(page=None):
                 (func.lower(User.first_name).like(func.lower(f"%{search}%")))
                 | func.lower(User.last_name).like(func.lower(f"%{search}%"))
             )
+        pfp_links = {}
+        users = users.paginate(page, 12, True)
+        for user in users.items:
+            if cache.get('pfp_url' + str(user.id)) is not None:
+                pfp_links[user.id] = cache.get('pfp_url' + str(user.id))
+            else:
+                pfp_links[user.id] = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+                cache.set('pfp_url' + str(user.id), pfp_links[user.id])
 
-        pfp_links = {
-            user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
-            for user in users
-        }
-
-        users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,
@@ -372,17 +374,21 @@ def before_request():
 @bp.context_processor
 def current_user_info():
     if current_user.is_authenticated:
-        pfp_file = f"images/{current_user.pfp_id}.jpg"
-        pfp_url = generate_url(BUCKET, pfp_file)
-        pending_reviews = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
+        if cache.get('pfp_url' + str(current_user.id)) is not None:
+            pfp_url = cache.get('pfp_url' + str(current_user.id))
+        else:
+            pfp_url = generate_url(BUCKET, f"images/{current_user.pfp_id}.jpg")
+            cache.set('pfp_url' + str(user.id), pfp_url)
+        if 'pending_reviews' not in session:
+            print('pending not in')
+            session['pending_reviews'] = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
+        if 'account_type' not in session:
+            print('account type not in')
+            session['account_type'] = Settings.query.filter_by(user_id=current_user.id, key="seller_account").first().value
         return {
-            "account_type": Settings.query.filter_by(
-                user_id=current_user.id, key="seller_account"
-            )
-            .first()
-            .value,
+            "account_type": session['account_type'],
             "pfp_url": pfp_url,
-            "pending_reviews": pending_reviews
+            "pending_reviews": session['pending_reviews']
         }
     else:
         return {}

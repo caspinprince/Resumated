@@ -13,7 +13,7 @@
                         <div class="avatar mx-auto bg-white">
                             <a href={{ url_for('general.user', username=user.username) }}>
                                 <img
-                                        src={{ pfp_links[user.username] }}
+                                        src={{ pfp_links[user.id] }}
                                                 onerror="this.src='../static/default_pfp.jpg'"
                                         class="rounded-circle img-fluid"/>
                             </a>
