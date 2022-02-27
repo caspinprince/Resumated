@@ -11,3 +11,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     EXPLAIN_TEMPLATE_LOADING = True
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
