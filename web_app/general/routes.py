@@ -25,6 +25,7 @@ from web_app.utilities import (
     delete_object_s3,
     get_requests,
 )
+from PIL import Image
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -91,8 +92,12 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
 
-    user_pfp_file = f"images/{user.pfp_id}.jpg"
-    user_pfp_url = generate_url(BUCKET, user_pfp_file)
+    if cache.get('pfp_url' + str(user.id)) is not None:
+        user_pfp_url = cache.get('pfp_url' + str(user.id))
+    else:
+        user_pfp_url = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+        cache.set('pfp_url' + str(user.id), user_pfp_url)
+
     seller_account = Settings.query.filter_by(
         user_id=user.id, key="seller_account"
     ).first()
@@ -109,9 +114,11 @@ def user(username):
             try:
                 img = request.files["profile_pic"]
                 content_type = request.mimetype
-                upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
-            except:
-                pass
+                cache.set('pfp' + str(user.id), Image.open(img))
+                upload_pfp_to_s3.delay('pfp' + str(user.id), BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+            except Exception as n:
+                print(n)
+
 
             user.first_name = profile_form.first_name.data
             user.last_name = profile_form.last_name.data
@@ -378,7 +385,7 @@ def current_user_info():
             pfp_url = cache.get('pfp_url' + str(current_user.id))
         else:
             pfp_url = generate_url(BUCKET, f"images/{current_user.pfp_id}.jpg")
-            cache.set('pfp_url' + str(user.id), pfp_url)
+            cache.set('pfp_url' + str(current_user.id), pfp_url)
         if 'pending_reviews' not in session:
             print('pending not in')
             session['pending_reviews'] = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
