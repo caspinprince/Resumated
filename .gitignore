@@ -4,3 +4,4 @@ __pycache__/
 .idea
 flaskenv
 .DS_Store
+web_app/cache

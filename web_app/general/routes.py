@@ -1,10 +1,10 @@
 import urllib.parse
 from datetime import datetime
 
-from flask import render_template, redirect, request, url_for
+from flask import render_template, redirect, request, url_for, session
 from flask_login import current_user, login_required
 from werkzeug.datastructures import CombinedMultiDict
-from web_app import db
+from web_app import db, cache
 from web_app.general import bp
 from sqlalchemy import func
 from web_app.general.forms import (
@@ -25,6 +25,7 @@ from web_app.utilities import (
     delete_object_s3,
     get_requests,
 )
+from PIL import Image
 
 IMAGE_UPLOAD_FOLDER = "web_app/images"
 BUCKET = "rezume-files"
@@ -58,13 +59,15 @@ def home(page=None):
                 (func.lower(User.first_name).like(func.lower(f"%{search}%")))
                 | func.lower(User.last_name).like(func.lower(f"%{search}%"))
             )
+        pfp_links = {}
+        users = users.paginate(page, 12, True)
+        for user in users.items:
+            if cache.get('pfp_url' + str(user.id)) is not None:
+                pfp_links[user.id] = cache.get('pfp_url' + str(user.id))
+            else:
+                pfp_links[user.id] = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+                cache.set('pfp_url' + str(user.id), pfp_links[user.id])
 
-        pfp_links = {
-            user.username: generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
-            for user in users
-        }
-
-        users = users.paginate(page, 8, True)
         return render_template(
             "general/user_home.html",
             users=users,
@@ -89,8 +92,12 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     last_seen = time_diff(user.last_online)
 
-    user_pfp_file = f"images/{user.pfp_id}.jpg"
-    user_pfp_url = generate_url(BUCKET, user_pfp_file)
+    if cache.get('pfp_url' + str(user.id)) is not None:
+        user_pfp_url = cache.get('pfp_url' + str(user.id))
+    else:
+        user_pfp_url = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+        cache.set('pfp_url' + str(user.id), user_pfp_url)
+
     seller_account = Settings.query.filter_by(
         user_id=user.id, key="seller_account"
     ).first()
@@ -107,9 +114,11 @@ def user(username):
             try:
                 img = request.files["profile_pic"]
                 content_type = request.mimetype
-                upload_pfp_to_s3(img, BUCKET, f"images/{user.pfp_id}.jpg", content_type)
-            except:
-                pass
+                cache.set('pfp' + str(user.id), Image.open(img))
+                upload_pfp_to_s3.delay('pfp' + str(user.id), BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+            except Exception as n:
+                print(n)
+
 
             user.first_name = profile_form.first_name.data
             user.last_name = profile_form.last_name.data
@@ -372,17 +381,21 @@ def before_request():
 @bp.context_processor
 def current_user_info():
     if current_user.is_authenticated:
-        pfp_file = f"images/{current_user.pfp_id}.jpg"
-        pfp_url = generate_url(BUCKET, pfp_file)
-        pending_reviews = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
+        if cache.get('pfp_url' + str(current_user.id)) is not None:
+            pfp_url = cache.get('pfp_url' + str(current_user.id))
+        else:
+            pfp_url = generate_url(BUCKET, f"images/{current_user.pfp_id}.jpg")
+            cache.set('pfp_url' + str(current_user.id), pfp_url)
+        if 'pending_reviews' not in session:
+            print('pending not in')
+            session['pending_reviews'] = FileAssociation.query.filter_by(user_id=current_user.id, user_status='shared', request_status='pending').count()
+        if 'account_type' not in session:
+            print('account type not in')
+            session['account_type'] = Settings.query.filter_by(user_id=current_user.id, key="seller_account").first().value
         return {
-            "account_type": Settings.query.filter_by(
-                user_id=current_user.id, key="seller_account"
-            )
-            .first()
-            .value,
+            "account_type": session['account_type'],
             "pfp_url": pfp_url,
-            "pending_reviews": pending_reviews
+            "pending_reviews": session['pending_reviews']
         }
     else:
         return {}
