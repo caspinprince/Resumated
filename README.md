@@ -1,6 +1,6 @@
 <h1 align="center">
     <a href="https://resumated.com">
-        <img src="https://github.com/caspinprince/Resumated/blob/main/web_app/static/full-logo.png" alt="Logo" width="125" height="125">
+        <img src="https://github.com/caspinprince/Resumated/blob/main/web_app/static/full-logo.png" alt="Logo" height="125">
     </a>
 </h1>
 
