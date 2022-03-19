@@ -79,24 +79,8 @@ def home(page=None):
 
 
 @bp.route("/user/<username>", methods=["GET", "POST"])
-@login_required
 def user(username):
-    profile_form = EditProfileForm(CombinedMultiDict((request.files, request.form)))
-
-    review_form = RequestReviewForm(request.form)
-    review_form.document.choices = [
-        (x["file_id"], x["filename"])
-        for x in get_user_files(current_user.id, "my-files")
-    ]
-
     user = User.query.filter_by(username=username).first_or_404()
-    last_seen = time_diff(user.last_online)
-
-    if cache.get('pfp_url' + str(user.id)) is not None:
-        user_pfp_url = cache.get('pfp_url' + str(user.id))
-    else:
-        user_pfp_url = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
-        cache.set('pfp_url' + str(user.id), user_pfp_url)
 
     seller_account = Settings.query.filter_by(
         user_id=user.id, key="seller_account"
@@ -108,58 +92,88 @@ def user(username):
     show_last_seen = Settings.query.filter_by(
         user_id=user.id, key="show_last_seen"
     ).first()
+    last_seen = time_diff(user.last_online)
 
-    if current_user.username == username:
-        if profile_form.validate_on_submit():
-            try:
-                img = request.files["profile_pic"]
-                content_type = request.mimetype
-                cache.set('pfp' + str(user.id), Image.open(img))
-                upload_pfp_to_s3.delay('pfp' + str(user.id), BUCKET, f"images/{user.pfp_id}.jpg", content_type)
-            except Exception as n:
-                print(n)
-
-
-            user.first_name = profile_form.first_name.data
-            user.last_name = profile_form.last_name.data
-            user.username = profile_form.username.data
-            user.headline = profile_form.headline.data
-            user.about_me = profile_form.about_me.data
-            db.session.commit()
-            return redirect(url_for("general.user", username=user.username))
-        elif request.method == "GET":
-            profile_form.first_name.data = user.first_name
-            profile_form.last_name.data = user.last_name
-            profile_form.username.data = user.username
-            profile_form.headline.data = user.headline
-            profile_form.about_me.data = user.about_me
+    if cache.get('pfp_url' + str(user.id)) is not None:
+        user_pfp_url = cache.get('pfp_url' + str(user.id))
     else:
-        if review_form.validate_on_submit():
-            file_id = review_form.document.data
-            requests = review_form.requests.data
-            assoc = FileAssociation(
-                user_status="shared",
-                user_id=user.id,
-                file_id=file_id,
-                requests=requests,
-                request_status="pending",
-            )
-            assoc.file = File.query.filter_by(id=file_id).first()
-            user.files.append(assoc)
-            db.session.add(user)
-            db.session.commit()
+        user_pfp_url = generate_url(BUCKET, f"images/{user.pfp_id}.jpg")
+        cache.set('pfp_url' + str(user.id), user_pfp_url)
 
-    return render_template(
-        "general/user.html",
-        user=user,
-        profile_form=profile_form,
-        review_form=review_form,
-        last_seen=last_seen,
-        show_join_date=show_join_date,
-        show_last_seen=show_last_seen,
-        user_pfp_url=user_pfp_url,
-        seller_account=seller_account,
-    )
+    if current_user.is_authenticated:
+        base = 'base.html'
+        profile_form = EditProfileForm(CombinedMultiDict((request.files, request.form)))
+
+        review_form = RequestReviewForm(request.form)
+        review_form.document.choices = [
+            (x["file_id"], x["filename"])
+            for x in get_user_files(current_user.id, "my-files")
+        ]
+
+        if current_user.username == username:
+            if profile_form.validate_on_submit():
+                try:
+                    img = request.files["profile_pic"]
+                    content_type = request.mimetype
+                    cache.set('pfp' + str(user.id), Image.open(img))
+                    upload_pfp_to_s3.delay('pfp' + str(user.id), BUCKET, f"images/{user.pfp_id}.jpg", content_type)
+                except Exception as n:
+                    print(n)
+
+
+                user.first_name = profile_form.first_name.data
+                user.last_name = profile_form.last_name.data
+                user.username = profile_form.username.data
+                user.headline = profile_form.headline.data
+                user.about_me = profile_form.about_me.data
+                db.session.commit()
+                return redirect(url_for("general.user", username=user.username))
+            elif request.method == "GET":
+                profile_form.first_name.data = user.first_name
+                profile_form.last_name.data = user.last_name
+                profile_form.username.data = user.username
+                profile_form.headline.data = user.headline
+                profile_form.about_me.data = user.about_me
+        else:
+            if review_form.validate_on_submit():
+                file_id = review_form.document.data
+                requests = review_form.requests.data
+                assoc = FileAssociation(
+                    user_status="shared",
+                    user_id=user.id,
+                    file_id=file_id,
+                    requests=requests,
+                    request_status="pending",
+                )
+                assoc.file = File.query.filter_by(id=file_id).first()
+                user.files.append(assoc)
+                db.session.add(user)
+                db.session.commit()
+
+        return render_template(
+            "general/user.html",
+            user=user,
+            profile_form=profile_form,
+            review_form=review_form,
+            last_seen=last_seen,
+            show_join_date=show_join_date,
+            show_last_seen=show_last_seen,
+            user_pfp_url=user_pfp_url,
+            seller_account=seller_account,
+            base=base,
+        )
+    else:
+        base = 'homebase.html'
+        return render_template(
+            "general/user.html",
+            user=user,
+            last_seen=last_seen,
+            show_join_date=show_join_date,
+            show_last_seen=show_last_seen,
+            user_pfp_url=user_pfp_url,
+            seller_account=seller_account,
+            base=base,
+        )
 
 
 @bp.route("/user_files/<username>/<filter>", methods=["GET", "POST"])
