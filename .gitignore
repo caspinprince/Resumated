@@ -5,3 +5,5 @@ __pycache__/
 flaskenv
 .DS_Store
 web_app/cache
+cache
+dump.rdb

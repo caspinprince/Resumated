@@ -1,22 +1,24 @@
 import time
-from locust import HttpUser, task, between, constant_throughput
+from locust import HttpUser, task, between, constant_throughput, tag, constant
 from lxml import html
 import re
 from web_app.models import User, Settings
 from web_app import db
 
-NUMTESTUSERS = 10
+NUMTESTUSERS = 200
 testUserNum = [x for x in range(NUMTESTUSERS, 0, -1)]
 
 
 class ExampleUser(HttpUser):
     testNum = None
-    wait_time = between(1, 2)
+    wait_time = constant(1)
     username = ""
+    email = ""
 
     def on_start(self):
         self.testNum = testUserNum.pop()
-        self.username = f"testaccount{self.testNum}"
+        self.username = f"loadtest{self.testNum}"
+        self.email = f"loadtest{self.testNum}@resumated.com"
         self.signup()
         self.login()
 
@@ -36,7 +38,7 @@ class ExampleUser(HttpUser):
             response = self.client.post(
                 "/auth/signup",
                 data={
-                    "email": f"testing{self.testNum}@resumated.com",
+                    "email": self.email,
                     "first_name": "Test",
                     "last_name": f"User - {self.testNum}",
                     "username": self.username,
@@ -52,12 +54,13 @@ class ExampleUser(HttpUser):
         self.client.post(
             "/auth/login",
             data={
-                "email": f"testing{self.testNum}@resumated.com",
+                "email": self.email,
                 "password": "qwertyuiop",
                 "csrf_token": token.group(2).decode("utf-8")
             },
         )
 
+    @tag('explore')
     @task
     def homepage(self):
         self.client.get("/explore")
@@ -68,10 +71,10 @@ class ExampleUser(HttpUser):
 
     @task
     def update_profile(self):
-        result = self.client.get(f"/user/testaccount{self.testNum}")
+        result = self.client.get(f"/user/{self.username}")
         token = re.search(b'(<input id="csrf_token" name="csrf_token" type="hidden" value=")([-A-Za-z.0-9]+)', result.content)
         self.client.post(
-            f'/user/testaccount{self.testNum}',
+            f'/user/{self.username}',
             data={
                 'headline': 'example headline',
                 'about_me': 'example about me',
@@ -81,7 +84,7 @@ class ExampleUser(HttpUser):
 
     @task
     def view_file_list(self):
-        self.client.get(f"/user_files/testaccount{self.testNum}/my-files")
+        self.client.get(f"/user_files/{self.username}/my-files")
 
     @task
     def view_file(self):
