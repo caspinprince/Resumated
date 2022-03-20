@@ -36,6 +36,8 @@ BUCKET = "rezume-files"
 @bp.route("/explore/<int:page>", methods=["POST", "GET"])
 def home(page=None):
     if current_user.is_authenticated:
+        session['name'] = current_user.username
+        session['room'] = 'generalchat'
         search_form = SearchForm(request.form)
         users = (
             db.session.query(
@@ -382,6 +384,15 @@ def delete_user():
     User.query.filter_by(id=current_user.id).delete()
     db.session.commit()
     return redirect(url_for("general.home"))
+
+
+@bp.route("/chat", methods=["GET"])
+def chat():
+    name = session.get('name', '')
+    room = session.get('room', '')
+    if name == '' or room == '':
+        return redirect(url_for('.index'))
+    return render_template('general/chat.html', name=name, room=room)
 
 
 @bp.before_request
