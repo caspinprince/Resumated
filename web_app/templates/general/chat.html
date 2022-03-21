@@ -1,14 +1,147 @@
-<html>
-<head>
-    <title>Flask-SocketIO-Chat: {{ room }}</title>
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="../static/socket.js"></script>
-</head>
-<body>
-<h1>Flask-SocketIO-Chat: {{ room }}</h1>
-<textarea id="chat" cols="80" rows="20"></textarea><br><br>
-<input id="text" size="80" placeholder="Enter your message here"><br><br>
-<a href="{{ url_for('general.home') }}" onclick="leave_room();">Leave this room</a>
-</body>
-</html>
+{#<head>#}
+{#    <title>Flask-SocketIO-Chat: {{ room }}</title>#}
+{#    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>#}
+{#    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>#}
+{#    <script type="text/javascript" charset="utf-8" src="../static/socket.js"></script>#}
+{#</head>#}
+{#<body>#}
+{#<h1>Flask-SocketIO-Chat: {{ room }}</h1>#}
+{#<textarea id="chat" cols="80" rows="20"></textarea><br><br>#}
+{#<input id="text" size="80" placeholder="Enter your message here"><br><br>#}
+{#<a href="{{ url_for('general.home') }}" onclick="leave_room();">Leave this room!</a>#}
+{#</body>#}
+<div class="container position-fixed bottom-0 end-0 chat-popup">
+
+    <div class="row d-flex justify-content-center">
+        <div>
+
+            <!-- Buttons trigger collapse -->
+            <button class="btn btn-lg btn-block chat-topbar btn-theme" data-bs-toggle="collapse" href="#collapseExample"
+                    role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Messages</span>
+                    <i class="bi bi-chevron-compact-down"></i>
+                </div>
+            </button>
+
+            <div class="collapse" id="collapseExample">
+                <div class="card" id="chat4">
+                    <div class="card-body" data-bs-perfect-scrollbar="true"
+                         style="position: relative; height: 400px; overflow-y: scroll;">
+
+                        <div class="d-flex flex-row justify-content-start">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                            <div>
+                                <p class="message-incoming">Hi</p>
+                                <p class="message-incoming">How are you ...???</p>
+                                <p class="message-incoming">What are you doing
+                                    tomorrow? Can we come up a bar?</p>
+                                <p class="message-incoming-timestamp">23:58</p>
+                            </div>
+                        </div>
+
+                        <div class="divider d-flex align-items-center mb-4">
+                            <p class="text-center mx-3 mb-0 message-date">Today</p>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                            <div>
+                                <p class="message-outgoing">Hiii, I'm good.</p>
+                                <p class="message-outgoing">How are you doing?</p>
+                                <p class="message-outgoing">Long time no see! Tomorrow office. will
+                                    be free on sunday.</p>
+                                <p class="message-outgoing-timestamp">00:06</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-start mb-4">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                            <div>
+                                <p class="message-incoming">Okay</p>
+                                <p class="message-incoming">We will go on Sunday?</p>
+                                <p class="message-incoming-timestamp">00:07</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end mb-4">
+                            <div>
+                                <p class="message-outgoing">That's awesome!</p>
+                                <p class="message-outgoing">I will meet you Sandon Square sharp at
+                                    10 AM</p>
+                                <p class="message-outgoing">Is that okay?</p>
+                                <p class="message-outgoing-timestamp">00:09</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-start mb-4">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                            <div>
+                                <p class="message-incoming">Okay i will meet you on
+                                    Sandon Square</p>
+                                <p class="message-incoming-timestamp">00:11</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end mb-4">
+                            <div>
+                                <p class="message-outgoing">Do you have pictures of Matley
+                                    Marriage?</p>
+                                <p class="message-outgoing-timestamp">00:11</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-start mb-4">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                            <div>
+                                <p class="message-incoming">Sorry I don't have. i
+                                    changed my phone.</p>
+                                <p class="message-incoming-timestamp">00:13</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end">
+                            <div>
+                                <p class="message-outgoing">Okay then see you on sunday!!</p>
+                                <p class="message-outgoing-timestamp">00:15</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                                 alt="avatar 1"
+                                 style="width: 45px; height: 100%;">
+                        </div>
+
+                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                            <textarea class="form-control" id="exampleFormControlInput3"
+                                      placeholder="Write a message..."></textarea>
+                        <a class="ms-3 link-info" href="#!">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#193453"
+                                 class="bi bi-send-fill" viewBox="0 0 16 16">
+                                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

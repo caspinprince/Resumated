@@ -251,3 +251,71 @@
 .red-text {
     color: #d01313;
 }
+
+#chat4 .form-control {
+    border-color: transparent;
+}
+
+#chat4 .form-control:focus  {
+    border-color: transparent;
+    box-shadow: inset 0px 0px 0px 1px transparent;
+}
+
+.divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}
+
+.chat-popup {
+    z-index: 10;
+    width: 380px;
+    margin: 25px;
+}
+
+.chat-topbar {
+    z-index: 10;
+    width: 100%;
+}
+
+.message-incoming {
+    background-color: #eaecf1;
+    color: black;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 15px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.message-outgoing {
+    background-color: #193453;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.message-incoming-timestamp {
+    font-size: 14px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    color: #6c757d;
+}
+
+.message-outgoing-timestamp {
+    font-size: 14px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    color: #6c757d;
+    display: flex;
+    justify-content: end;
+}
+
+.message-date {
+    color: #a2aab7
+}
