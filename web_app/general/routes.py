@@ -386,15 +386,6 @@ def delete_user():
     return redirect(url_for("general.home"))
 
 
-@bp.route("/chat", methods=["GET"])
-def chat():
-    name = session.get('name', '')
-    room = session.get('room', '')
-    if name == '' or room == '':
-        return redirect(url_for('.index'))
-    return render_template('general/chat.html', name=name, room=room)
-
-
 @bp.before_request
 def before_request():
     if current_user.is_authenticated:
