@@ -12,6 +12,30 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+class Connection(db.Model):
+    __tablename__ = 'Connection'
+    id = db.Column(db.Integer(), primary_key=True)
+    pending = db.Column(db.Boolean, nullable=False)
+    userid1 = db.Column(
+        db.Integer(),
+        db.ForeignKey('User_Info.id'),
+        nullable=False,
+    )
+    userid2 = db.Column(
+        db.Integer(),
+        db.ForeignKey('User_Info.id'),
+        nullable=False,
+    )
+    user1 = db.relationship(
+        "User",
+        primaryjoin="Connection.userid1 == User.id",
+    )
+    user2 = db.relationship(
+        "User",
+        primaryjoin="Connection.userid2 == User.id"
+    )
+
+
 class FileAssociation(db.Model):
     __tablename__ = "FileAssociation"
     user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), primary_key=True)
@@ -41,9 +65,17 @@ class User(db.Model, UserMixin):
     pfp_id = db.Column(db.String(50), unique=True)
     files = db.relationship(FileAssociation, back_populates="user", cascade="all, delete-orphan")
     settings = db.relationship("Settings", backref="users", cascade="all, delete-orphan")
+    conversations = db.relationship(
+        Connection,
+        primaryjoin=db.or_(
+            id == Connection.userid1,
+            id == Connection.userid2,
+            ),
+        viewonly=True,
+    )
 
     def __init__(
-        self, first_name, last_name, email, username, password=None, google_id=None
+            self, first_name, last_name, email, username, password=None, google_id=None
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -57,6 +89,20 @@ class User(db.Model, UserMixin):
 
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def is_connected(self, user):
+        pass
+
+    def request_connect(self, user):
+        connection = Connection(user1=self, user2=user)
+        connection.connected, connection.connector = user, self
+        db.session.add(connection)
+
+    def accept_connect(self):
+        pass
+
+    def connections(self):
+        pass
 
 
 class File(db.Model):
