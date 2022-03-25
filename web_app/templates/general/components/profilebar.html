@@ -1,0 +1,114 @@
+{% if user == current_user %}
+    <button type="button" class="btn mx-1" data-mdb-ripple-color="dark"
+            style="z-index: 1; color:black; background-color: #ffc107;"
+            data-bs-toggle="modal"
+            data-bs-target="#editProfileModal">
+        Edit profile
+    </button>
+    <div class="modal fade" id="editProfileModal" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"
+                        style="color: black;">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form class="row g-3" method="post" enctype="multipart/form-data">
+                    {{ profile_form.csrf_token }}
+                    <div class="modal-body">
+                        {{ profile_form.hidden_tag() }}
+                        <div class="col-12">
+                            {{ profile_form.first_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.first_name(class="form-control") }}
+                        </div>
+                        <div class="col-12">
+                            {{ profile_form.last_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.last_name(class="form-control") }}
+                        </div>
+                        <div class="col-12">
+                            {{ profile_form.username.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.username(class="form-control") }}
+                        </div>
+                        <div class="col-12">
+                            {{ profile_form.headline.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.headline(class="form-control", maxlength="250") }}
+                        </div>
+                        <div class="col-12">
+                            {{ profile_form.about_me.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.about_me(class="form-control", maxlength="1000") }}
+                        </div>
+                        <div class="col-12 mt-2"
+                             style="color: black; margin-bottom: -10px;">
+                            {{ profile_form.profile_pic.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.profile_pic(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">Close
+                        </button>
+                        {{ profile_form.submit(class="btn btn-theme") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div style="display: flex;">
+        <form method="post" action={{ url_for('general.connect', user_id=user.id) }}>
+            <input class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;" type="submit" name="deleteuser" value="Connect">
+        </form>
+        {% if seller_account.value == '1' %}
+            {% if current_user.is_authenticated %}
+                <button type="button" class="btn btn-outline-dark mx-1" data-mdb-ripple-color="dark"
+                        style="z-index: 1;"
+                        data-bs-toggle="modal"
+                        data-bs-target="#requestReviewModal">
+                    Request Review
+                </button>
+                <div class="modal fade" id="requestReviewModal" tabindex="-1"
+                     aria-labelledby="reviewRequestModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="reviewRequestModalLabel"
+                                    style="color: white;">Request a Review</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                </button>
+                            </div>
+                            <form class="row g-3" method="post" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    {{ review_form.hidden_tag() }}
+                                    <div class="col-12">
+                                        {{ review_form.document.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                                        {{ review_form.document(class="form-control") }}
+                                    </div>
+                                    <div class="col-12 mt-2"
+                                         style="color: black; margin-bottom: -10px;">
+                                        {{ review_form.requests.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                                        {{ review_form.requests(class="form-control", maxlength="1000") }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close
+                                    </button>
+                                    {{ review_form.submit(class="btn btn-theme") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <a class="btn btn-outline-dark mx-1" data-mdb-ripple-color="dark"
+                   style="z-index: 1; color:white; background-color: #212529;"
+                   href="{{ url_for('auth.login') }}">
+                    Request Review
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endif %}
