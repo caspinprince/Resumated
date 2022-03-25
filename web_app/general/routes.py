@@ -15,7 +15,7 @@ from web_app.general.forms import (
     ReviewForm,
     SearchForm,
 )
-from web_app.models import User, File, Settings, FileAssociation, Feedback, Connection
+from web_app.models import User, File, Settings, FileAssociation, Feedback
 from web_app.utilities import (
     time_diff,
     upload_pfp_to_s3,
@@ -383,15 +383,6 @@ def delete_user():
 
     User.query.filter_by(id=current_user.id).delete()
     db.session.commit()
-    return redirect(url_for("general.home"))
-
-
-@bp.route("/connect/<int:user_id>", methods=["POST"])
-@login_required
-def connect(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    current_user.request_connect(user)
-
     return redirect(url_for("general.home"))
 
 

@@ -57,7 +57,7 @@
     </div>
 {% else %}
     <div style="display: flex;">
-        <form method="post" action={{ url_for('general.connect', user_id=user.id) }}>
+        <form method="post" action={{ url_for('social.connect', user_id=user.id) }}>
             <input class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;" type="submit" name="deleteuser" value="Connect">
         </form>
         {% if seller_account.value == '1' %}
