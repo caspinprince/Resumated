@@ -65,13 +65,14 @@ class User(db.Model, UserMixin):
     pfp_id = db.Column(db.String(50), unique=True)
     files = db.relationship(FileAssociation, back_populates="user", cascade="all, delete-orphan")
     settings = db.relationship("Settings", backref="users", cascade="all, delete-orphan")
-    conversations = db.relationship(
+    connections = db.relationship(
         Connection,
         primaryjoin=db.or_(
             id == Connection.userid1,
             id == Connection.userid2,
             ),
         viewonly=True,
+        lazy='dynamic'
     )
 
     def __init__(
@@ -90,20 +91,37 @@ class User(db.Model, UserMixin):
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def is_connected(self, user):
-        pass
+    def get_connection(self, user):
+        return self.connections.filter((Connection.userid1 == user.id) | (Connection.userid2 == user.id))
+
+    def connection_status(self, user):
+        connection = self.get_connection(user)
+        if connection.count() > 0:
+            return 'Connected' if connection.pending else 'Pending'
+        return "Not Connected"
+
+    def connection_count(self):
+        return self.connections.all().count()
 
     def request_connect(self, user):
-        connection = Connection(user1=self, user2=user)
+        connection = Connection(user1=self, user2=user, pending=True)
         connection.connected, connection.connector = user, self
         db.session.add(connection)
+        db.session.commit()
 
-    def accept_connect(self):
-        pass
+    def accept_connect(self, user):
+        self.get_connection(user).first().update(
+            {Connection.pending: False}
+        )
+        db.session.commit()
 
-    def connections(self):
-        pass
+    def pending_connections(self, incoming=True):
+        if incoming:
+            return self.connections.filter((Connection.userid2 == self.id) & (Connection.pending == True)).all()
+        return self.connections.filter((Connection.userid1 == self.id) & (Connection.pending == True)).all()
 
+    def all_connections(self):
+        return self.connections.all()
 
 class File(db.Model):
     __tablename__ = "File"
