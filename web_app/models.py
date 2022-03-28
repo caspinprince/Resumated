@@ -20,11 +20,13 @@ class Connection(db.Model):
         db.Integer(),
         db.ForeignKey('User_Info.id'),
         nullable=False,
+        primary_key=True,
     )
     userid2 = db.Column(
         db.Integer(),
         db.ForeignKey('User_Info.id'),
         nullable=False,
+        primary_key=True,
     )
     user1 = db.relationship(
         "User",
@@ -96,9 +98,9 @@ class User(db.Model, UserMixin):
 
     def connection_status(self, user):
         connection = self.get_connection(user)
-        if connection.count() > 0:
-            return 'Connected' if connection.pending else 'Pending'
-        return "Not Connected"
+        if connection.count() == 0:
+            return "Not Connected"
+        return 'Pending' if connection.first().pending else 'Connected'
 
     def connection_count(self):
         return self.connections.all().count()

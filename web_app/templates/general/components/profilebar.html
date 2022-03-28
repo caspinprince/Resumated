@@ -57,9 +57,15 @@
     </div>
 {% else %}
     <div style="display: flex;">
-        <form method="post" action={{ url_for('social.connect', user_id=user.id) }}>
-            <input class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;" type="submit" name="deleteuser" value="Connect">
-        </form>
+        {% if connection_status == 'Not Connected' %}
+            <form method="post" action={{ url_for('social.connect', user_id=user.id) }}>
+                <input class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;" type="submit" name="deleteuser" value="Connect">
+            </form>
+        {% elif connection_status == 'Pending' %}
+            <div class="btn mx-1 btn-outline-dark" style="margin-left: 35px;">Pending</div>
+        {% else %}
+            <div class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;">Message</div>
+        {% endif %}
         {% if seller_account.value == '1' %}
             {% if current_user.is_authenticated %}
                 <button type="button" class="btn btn-outline-dark mx-1" data-mdb-ripple-color="dark"
