@@ -319,3 +319,9 @@
 .message-date {
     color: #a2aab7
 }
+
+.form-header {
+    color: black;
+    margin: 5px 0px 5px 0px;
+    float: left;
+}

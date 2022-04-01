@@ -20,28 +20,28 @@
                     <div class="modal-body">
                         {{ profile_form.hidden_tag() }}
                         <div class="col-12">
-                            {{ profile_form.first_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.first_name.label(class="form-label form-header") }}
                             {{ profile_form.first_name(class="form-control") }}
                         </div>
                         <div class="col-12">
-                            {{ profile_form.last_name.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.last_name.label(class="form-label form-header") }}
                             {{ profile_form.last_name(class="form-control") }}
                         </div>
                         <div class="col-12">
-                            {{ profile_form.username.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.username.label(class="form-label form-header") }}
                             {{ profile_form.username(class="form-control") }}
                         </div>
                         <div class="col-12">
-                            {{ profile_form.headline.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.headline.label(class="form-label form-header") }}
                             {{ profile_form.headline(class="form-control", maxlength="250") }}
                         </div>
                         <div class="col-12">
-                            {{ profile_form.about_me.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.about_me.label(class="form-label form-header") }}
                             {{ profile_form.about_me(class="form-control", maxlength="1000") }}
                         </div>
                         <div class="col-12 mt-2"
                              style="color: black; margin-bottom: -10px;">
-                            {{ profile_form.profile_pic.label(class="form-label", style="color: black; margin: 5px 0px -5px 0px;") }}
+                            {{ profile_form.profile_pic.label(class="form-label form-header") }}
                             {{ profile_form.profile_pic(class="form-control") }}
                         </div>
                     </div>
