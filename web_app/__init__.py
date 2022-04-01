@@ -33,17 +33,19 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     moment.init_app(app)
     cache.init_app(app, config={'CACHE_TYPE': 'FileSystemCache', 'CACHE_THRESHOLD': 5000, 'CACHE_DIR': 'cache', "CACHE_DEFAULT_TIMEOUT": 3600})
-    from web_app.auth import bp as auth_bp
 
+    from web_app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     from web_app.general import bp as general_bp
-
     app.register_blueprint(general_bp)
 
-    from web_app.auth.oauth import blueprint as google_bp
+    from web_app.social import bp as social_bp
+    app.register_blueprint(social_bp)
 
+    from web_app.auth.oauth import blueprint as google_bp
     app.register_blueprint(google_bp, url_prefix="/signup_google")
+
     socketio.init_app(app)
 
     return app

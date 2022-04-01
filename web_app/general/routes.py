@@ -152,6 +152,7 @@ def user(username):
                 db.session.add(user)
                 db.session.commit()
 
+        connection_status = current_user.connection_status(user)
         return render_template(
             "general/user.html",
             user=user,
@@ -163,6 +164,7 @@ def user(username):
             user_pfp_url=user_pfp_url,
             seller_account=seller_account,
             base=base,
+            connection_status=connection_status
         )
     else:
         base = 'homebase.html'
@@ -394,7 +396,7 @@ def before_request():
         db.session.commit()
 
 
-@bp.context_processor
+@bp.app_context_processor
 def current_user_info():
     if current_user.is_authenticated:
         if cache.get('pfp_url' + str(current_user.id)) is not None:

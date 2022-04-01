@@ -12,6 +12,32 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+class Connection(db.Model):
+    __tablename__ = 'Connection'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    pending = db.Column(db.Boolean, nullable=False)
+    userid1 = db.Column(
+        db.Integer(),
+        db.ForeignKey('User_Info.id'),
+        nullable=False,
+        primary_key=True,
+    )
+    userid2 = db.Column(
+        db.Integer(),
+        db.ForeignKey('User_Info.id'),
+        nullable=False,
+        primary_key=True,
+    )
+    user1 = db.relationship(
+        "User",
+        primaryjoin="Connection.userid1 == User_Info.c.id",
+    )
+    user2 = db.relationship(
+        "User",
+        primaryjoin="Connection.userid2 == User_Info.c.id"
+    )
+
+
 class FileAssociation(db.Model):
     __tablename__ = "FileAssociation"
     user_id = db.Column(db.Integer, db.ForeignKey("User_Info.id", ondelete='CASCADE'), primary_key=True)
@@ -41,9 +67,18 @@ class User(db.Model, UserMixin):
     pfp_id = db.Column(db.String(50), unique=True)
     files = db.relationship(FileAssociation, back_populates="user", cascade="all, delete-orphan")
     settings = db.relationship("Settings", backref="users", cascade="all, delete-orphan")
+    connections = db.relationship(
+        Connection,
+        primaryjoin=db.or_(
+            id == Connection.userid1,
+            id == Connection.userid2,
+        ),
+        viewonly=True,
+        lazy='dynamic'
+    )
 
     def __init__(
-        self, first_name, last_name, email, username, password=None, google_id=None
+            self, first_name, last_name, email, username, password=None, google_id=None
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -57,6 +92,43 @@ class User(db.Model, UserMixin):
 
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_connection(self, user, incoming=False):
+        # filter for incoming connections only for accepting connections(cannot accept your own request)
+        if incoming:
+            return self.connections.filter(Connection.userid1 == user.id)
+        return self.connections.filter((Connection.userid1 == user.id) | (Connection.userid2 == user.id))
+
+    def connection_status(self, user):
+        connection = self.get_connection(user)
+        if connection.count() == 0:
+            return "Not Connected"
+        return 'Pending' if connection.first().pending else 'Connected'
+
+    def connection_count(self):
+        return self.connections.all().count()
+
+    def request_connect(self, user):
+        connection = Connection(user1=self, user2=user, pending=True)
+        connection.connected, connection.connector = user, self
+        db.session.add(connection)
+        db.session.commit()
+
+    def accept_connect(self, user):
+        connection = self.get_connection(user, incoming=True).first()
+        connection.pending=False
+        db.session.add(connection)
+        db.session.commit()
+
+    def pending_connections(self, incoming=True):
+        if incoming:
+            return self.connections.filter(
+                (Connection.userid2 == self.id) & (Connection.pending == True))
+        return self.connections.filter(
+            (Connection.userid1 == self.id) & (Connection.pending == True))
+
+    def all_connections(self):
+        return self.connections.filter_by(pending=False).all()
 
 
 class File(db.Model):
