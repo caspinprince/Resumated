@@ -14,7 +14,7 @@ def load_user(user_id):
 
 class Connection(db.Model):
     __tablename__ = 'Connection'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     pending = db.Column(db.Boolean, nullable=False)
     userid1 = db.Column(
         db.Integer(),
@@ -30,11 +30,11 @@ class Connection(db.Model):
     )
     user1 = db.relationship(
         "User",
-        primaryjoin="Connection.userid1 == User.id",
+        primaryjoin="Connection.userid1 == User_Info.c.id",
     )
     user2 = db.relationship(
         "User",
-        primaryjoin="Connection.userid2 == User.id"
+        primaryjoin="Connection.userid2 == User_Info.c.id"
     )
 
 
@@ -72,7 +72,7 @@ class User(db.Model, UserMixin):
         primaryjoin=db.or_(
             id == Connection.userid1,
             id == Connection.userid2,
-            ),
+        ),
         viewonly=True,
         lazy='dynamic'
     )
@@ -93,7 +93,10 @@ class User(db.Model, UserMixin):
     def password_check(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def get_connection(self, user):
+    def get_connection(self, user, incoming=False):
+        # filter for incoming connections only for accepting connections(cannot accept your own request)
+        if incoming:
+            return self.connections.filter(Connection.userid1 == user.id)
         return self.connections.filter((Connection.userid1 == user.id) | (Connection.userid2 == user.id))
 
     def connection_status(self, user):
@@ -112,18 +115,21 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def accept_connect(self, user):
-        self.get_connection(user).first().update(
-            {Connection.pending: False}
-        )
+        connection = self.get_connection(user, incoming=True).first()
+        connection.pending=False
+        db.session.add(connection)
         db.session.commit()
 
     def pending_connections(self, incoming=True):
         if incoming:
-            return self.connections.filter((Connection.userid2 == self.id) & (Connection.pending == True)).all()
-        return self.connections.filter((Connection.userid1 == self.id) & (Connection.pending == True)).all()
+            return self.connections.filter(
+                (Connection.userid2 == self.id) & (Connection.pending == True))
+        return self.connections.filter(
+            (Connection.userid1 == self.id) & (Connection.pending == True))
 
     def all_connections(self):
-        return self.connections.all()
+        return self.connections.filter_by(pending=False).all()
+
 
 class File(db.Model):
     __tablename__ = "File"

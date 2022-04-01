@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "social/components/connection_table.html" import connection_table with context %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="medium-title">Connections</div>
+                {{ connection_table(connections) }}
+            </div>
+            <div class="col">
+                <div class="medium-title">Incoming Connection Requests</div>
+                {{ connection_table(incoming, incoming=True) }}
+            </div>
+            <div class="col">
+                <div class="medium-title">Outgoing Connection Requests</div>
+                {{ connection_table(outgoing, incoming=False) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

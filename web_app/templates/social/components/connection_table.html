@@ -1,0 +1,29 @@
+{% macro connection_table(connections, incoming) %}
+    <table id="fileTable" class="table table-hover" style="border-width: 0;">
+        <thead style="border-width: 0;">
+        <tr>
+            <th class="th-sm text-muted" style="padding-left: 0;" scope="col">User</th>
+            <th class="th-sm text-muted" scope="col">Status</th>
+        </tr>
+        </thead>
+        <tbody style="border-width: 0px">
+        {% for connection in connections %}
+            <tr>
+                <th scope="row">
+                    {% if incoming %}
+                        <a class="btn pt-3 pb-3">{{ connection.user1.first_name }} {{ connection.user1.last_name }}</a>
+                    {% else %}
+                        <a class="btn pt-3 pb-3">{{ connection.user2.first_name }} {{ connection.user2.last_name }}</a>
+                    {% endif %}
+                </th>
+                {% if incoming %}
+                    <form method="post"
+                        action="{{ url_for('social.accept_connect', user_id=connection.user1.id) }}">
+                        <td class="align-middle"><input class="btn" type="submit" name="accept_connect" value="Accept"></td>
+                    </form>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}

@@ -34,7 +34,7 @@
         <div class="d-flex align-items-center">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('general.home') }}" class="btn me-2" style="color: #193453;">Explore</a>
-{#                <a href="{{ url_for('general.connections') }}" class="btn me-2" style="color: #193453;">Connections</a>#}
+                <a href="{{ url_for('social.connections') }}" class="btn me-2" style="color: #193453;">Connections</a>
                 {% if account_type == '1' %}
                     <div class="dropdown">
                         <a id="navbar" class="btn me-2" style="color: #193453" data-bs-toggle="dropdown"

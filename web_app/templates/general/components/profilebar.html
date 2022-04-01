@@ -58,7 +58,7 @@
 {% else %}
     <div style="display: flex;">
         {% if connection_status == 'Not Connected' %}
-            <form method="post" action={{ url_for('social.connect', user_id=user.id) }}>
+            <form method="post" action={{ url_for('social.request_connect', user_id=user.id) }}>
                 <input class="btn mx-1" style="color:white; background-color: #212529; margin-left: 35px;" type="submit" name="deleteuser" value="Connect">
             </form>
         {% elif connection_status == 'Pending' %}
