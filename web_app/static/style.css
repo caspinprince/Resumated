@@ -288,6 +288,8 @@
     margin-left: 15px;
     margin-bottom: 5px;
     font-size: 14px;
+    word-break: break-word;
+    word-wrap: break-word;
 }
 
 .message-outgoing {
@@ -298,6 +300,8 @@
     margin-right: 15px;
     margin-bottom: 5px;
     font-size: 14px;
+    word-break: break-word;
+    word-wrap: break-word;
 }
 
 .message-incoming-timestamp {

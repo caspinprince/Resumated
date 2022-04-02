@@ -24,7 +24,7 @@ $(document).ready(function () {
         lastGroup = lastGroup.includes("justify-content-end") ? "outgoing" : "incoming"
         let currentGroup = data.username === username ? "outgoing" : "incoming"
         let prev;
-        if (currentGroup !== lastGroup) {
+        if (currentGroup !== lastGroup || chatbox.children.length === 1) {
             prev = chatbox.children[chatbox.children.length - 1]
             let newGroup;
             if (currentGroup === "outgoing") {
