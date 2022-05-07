@@ -1,4 +1,5 @@
 import io
+import os
 
 import boto3
 from botocore.client import Config
@@ -30,8 +31,8 @@ def upload_pfp_to_s3(pfp_cache, bucket, file_name, content_type):
     crop_square(image_file).convert('RGB').save(img_bytes, format="JPEG", optimize=True, quality=20)
     byteArr = img_bytes.getvalue()
     session = boto3.session.Session()
-    s3_client = session.client('s3', aws_access_key_id='AKIA4QN2U3BRYSBGFH53',
-                        aws_secret_access_key='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', region_name='us-east-2', config=Config(signature_version='s3v4'))
+    s3_client = session.client('s3', aws_access_key_id=os.environ.get("S3_KEY"),
+                        aws_secret_access_key=os.environ.get("S3_SECRET_KEY"), region_name='us-east-2', config=Config(signature_version='s3v4'))
 
     response = s3_client.put_object(
         Body=byteArr, Bucket=bucket, Key=file_name, ContentType=content_type
@@ -54,8 +55,8 @@ def delete_object_s3(bucket, file_name):
 
 def generate_url(bucket_name, object_name):
     session = boto3.session.Session()
-    s3_client = session.client('s3', aws_access_key_id='AKIA4QN2U3BRYSBGFH53',
-                        aws_secret_access_key='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', region_name='us-east-2', config=Config(signature_version='s3v4'))
+    s3_client = session.client('s3', aws_access_key_id=os.environ.get("S3_KEY"),
+                        aws_secret_access_key=os.environ.get("S3_SECRET_KEY"), region_name='us-east-2', config=Config(signature_version='s3v4'))
 
     # presigned urls expire every day while cache expires every hour so urls are always fresh
     response = s3_client.generate_presigned_url(
